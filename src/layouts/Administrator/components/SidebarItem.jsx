@@ -12,9 +12,9 @@ const SidebarItem = ({ icon, text, expanded, path }) => {
                 : 'hover:bg-teal-600 hover:text-white'} cursor-pointer mx-4 rounded-lg`
             }
         >
-            <div className="flex items-center justify-center">{icon}</div>
-            {expanded && <span className="ml-4">{text}</span>}
-            {expanded && <ChevronRight className="ml-auto" size={16} />}
+            <div className="flex items-center justify-center ">{icon}</div>
+            {expanded && <span className="ml-4 text-xl">{text}</span>}
+            {expanded && <ChevronRight className="ml-auto" size={20} />}
         </NavLink>
     );
 };

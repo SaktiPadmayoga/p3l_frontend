@@ -17,7 +17,7 @@ const HistoryDonasi = () => {
         },
         {
           id: 2,
-          organisasi: 'Rumah Singgah Harapan',
+          organisasi: 'Rumah Singgah Harapan Bangsa',
           barang: ['Sembako', 'Alat Tulis'],
           tanggal_donasi: '2025-04-15',
           status: 'Diterima',

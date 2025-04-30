@@ -108,8 +108,8 @@ const ManagePenitip = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="overflow-x-auto sm:rounded-lg bg-white shadow mt-10">
-          <table className="min-w-full divide-y divide-gray-200 rounded-2xl shadow">
+        <div className="overflow-x-auto  sm:rounded-lg bg-white shadow mt-10">
+          <table className="w-full divide-y divide-gray-200 rounded-2xl shadow">
             <thead>
               <tr>
                 {['ID', 'Nama', 'No. Telepon', 'Alamat', 'Email', 'Poin', 'Rating', 'Badge', 'No. KTP', 'Jumlah Penjualan', 'Status', 'Aksi'].map((head) => (

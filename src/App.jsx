@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom
 import Dashboard from './layouts/Administrator/Dashboard';
 import Login from './auth/login/login';
 import Register from './auth/register/register';
-import HomePage from './layouts/user/pages/Homepage';
+import HomePage from './layouts/user/pages/HomePage';
 import Catalogue from './layouts/user/pages/Catalogue';
 import UserNavbar from './layouts/user/components/UserNavbar';
-import DetailProduct from './layouts/user/pages/detail-product';
-import Profile from './layouts/user/pages/profile';
-import ManagePegawai from './layouts/administrator/pages/manage-pegawai';
+import DetailProduct from './layouts/user/pages/DetailProduct';
+import Profile from './layouts/user/pages/Profile';
+import ManagePegawai from './layouts/administrator/pages/ManagePegawai';
 import ManagePenitip from './layouts/administrator/pages/ManagePenitip';
 import ManageJabatan from './layouts/administrator/pages/ManageJabatan';
 import ManageOrganisasi from './layouts/administrator/pages/ManageOrganisasi';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { User, Home, ShoppingBag, Heart, Clock, Settings, Bell } from 'lucide-react';
-import AddressManagement from '../components/profile-manage-address';
+import AddressManagement from '../components/ManageAddress';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('profile');

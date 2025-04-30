@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "../../../assets/hero-bg.jpg";
-import CategoryGallery from "../components/category-gallery";
+import CategoryGallery from "../components/CategoryGallery";
 import Footer from "../components/footer";
 import RecommendedProducts from "../components/RecommendedProduct";
 import ThreeHorizontalCard from "../components/ThreeCard";
@@ -8,7 +8,7 @@ import ThreeHorizontalCard from "../components/ThreeCard";
 
 import HeroImageSwiper from "../components/ImageSwiper";
 
-const Homepage = () => {
+const HomePage = () => {
   return (
     <div className="min-h-screen mt-32">
 
@@ -95,4 +95,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default HomePage;

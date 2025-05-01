@@ -1,49 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
+import axiosInstance from "../../../utils/axiosInstance";
 
 const ManageMerchandise = () => {
   const [merchandises, setMerchandises] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newMerchandise, setNewMerchandise] = useState({
-    nama: '',
-    deskripsi: '',
-    poin_dibutuhkan: '',
-    stok: '',
-    gambar: '',
+    nama: "",
+    deskripsi: "",
+    poin_dibutuhkan: "",
+    stok: "",
+    gambar: "",
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+
+  // Function to format the image URL correctly
+  const formatImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+
+    // If path already includes http:// or https://, return as is
+    if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+      return imagePath;
+    }
+
+    // Otherwise, prepend the storage URL
+    return `http://localhost:8000/storage/${imagePath}`;
+  };
+
+  const fetchMerchandises = useCallback(async () => {
+    try {
+      setLoadError(null);
+      setLoading(true);
+      const res = await axiosInstance.get("/admin/manage-merchandise");
+      setMerchandises(res.data);
+    } catch (err) {
+      console.error("Failed to fetch merchandises", err);
+      setLoadError("Failed to load merchandises. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    // Simulasi fetch data merchandise
-    setTimeout(() => {
-      setMerchandises([
-        {
-          id: 1,
-          nama: 'Kaos Eksklusif',
-          deskripsi: 'Kaos edisi spesial organisasi',
-          poin_dibutuhkan: 500,
-          stok: 10,
-          gambar: 'https://via.placeholder.com/100',
-        },
-        {
-          id: 2,
-          nama: 'Tumbler',
-          deskripsi: 'Tumbler ramah lingkungan',
-          poin_dibutuhkan: 300,
-          stok: 25,
-          gambar: 'https://via.placeholder.com/100',
-        },
-      ]);
-      setLoading(false);
-    }, 500);
-  }, []);
+    fetchMerchandises();
+  }, [fetchMerchandises]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
   const filteredMerchandises = merchandises.filter((item) =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
+    item.NAMA.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleInputChange = (e) => {
@@ -54,30 +65,136 @@ const ManageMerchandise = () => {
     });
   };
 
-  const handleAddMerchandise = () => {
-    const newId = merchandises.length > 0 ? merchandises[merchandises.length - 1].id + 1 : 1;
-    const merchandiseToAdd = {
-      id: newId,
-      ...newMerchandise,
-      poin_dibutuhkan: parseInt(newMerchandise.poin_dibutuhkan),
-      stok: parseInt(newMerchandise.stok),
-    };
-    setMerchandises([...merchandises, merchandiseToAdd]);
-    setIsModalOpen(false);
-    setNewMerchandise({
-      nama: '',
-      deskripsi: '',
-      poin_dibutuhkan: '',
-      stok: '',
-      gambar: '',
-    });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      // Create preview URL for the selected image
+      const previewUrl = URL.createObjectURL(file);
+      setPreviewImage(previewUrl);
+    }
   };
+
+  const resetForm = () => {
+    setNewMerchandise({
+      nama: "",
+      deskripsi: "",
+      poin_dibutuhkan: "",
+      stok: "",
+      gambar: "",
+    });
+    setSelectedFile(null);
+    setPreviewImage(null);
+    setEditingId(null);
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Create FormData object to handle file uploads
+      const formData = new FormData();
+      formData.append("NAMA", newMerchandise.nama);
+      formData.append("DESKRIPSI", newMerchandise.deskripsi);
+      formData.append("POIN_DIBUTUHKAN", newMerchandise.poin_dibutuhkan);
+      formData.append("STOK", newMerchandise.stok);
+
+      // If a new file is selected, append it to formData
+      if (selectedFile) {
+        formData.append("URL_GAMBAR", selectedFile);
+      } else if (newMerchandise.gambar && !selectedFile) {
+        // If no new file but there's an existing gambar URL, pass it along
+        formData.append("URL_GAMBAR", newMerchandise.gambar);
+      }
+
+      if (editingId) {
+        // For update
+        await axiosInstance.post(
+          `/admin/manage-merchandise/${editingId}?_method=PUT`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Merchandise berhasil diperbarui!");
+      } else {
+        // For create
+        await axiosInstance.post("/admin/manage-merchandise", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Merchandise berhasil ditambahkan!");
+      }
+
+      fetchMerchandises();
+      resetForm();
+    } catch (err) {
+      console.error("Error saving merchandise", err);
+      alert("Gagal menyimpan merchandise. Silakan coba lagi.");
+    }
+  };
+
+  const handleEdit = (item) => {
+    setNewMerchandise({
+      nama: item.NAMA,
+      deskripsi: item.DESKRIPSI,
+      poin_dibutuhkan: item.POIN_DIBUTUHKAN,
+      stok: item.STOK,
+      gambar: item.URL_GAMBAR,
+    });
+
+    // Set the preview image if there's an existing photo
+    if (item.URL_GAMBAR) {
+      setPreviewImage(formatImageUrl(item.URL_GAMBAR));
+    } else {
+      setPreviewImage(null);
+    }
+
+    setEditingId(item.ID_MERCHANDISE);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Yakin ingin menghapus merchandise ini?")) {
+      try {
+        await axiosInstance.delete(`/admin/manage-merchandise/${id}`);
+        fetchMerchandises();
+        alert("Merchandise berhasil dihapus!");
+      } catch (err) {
+        console.error("Error deleting merchandise", err);
+        alert("Gagal menghapus merchandise. Silakan coba lagi.");
+      }
+    }
+  };
+
+  // Clean up preview URL when component unmounts or when a new file is selected
+  useEffect(() => {
+    return () => {
+      if (previewImage && previewImage.startsWith("blob:")) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
 
   return (
     <div className="p-6">
       <h1 className="text-4xl font-bold mb-10">Manage Merchandise</h1>
 
-      {/* Search dan Tambah */}
+      {loadError && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{loadError}</p>
+          <button
+            onClick={fetchMerchandises}
+            className="ml-2 font-bold underline"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       <div className="flex justify-between mb-4">
         <input
           type="text"
@@ -87,22 +204,35 @@ const ManageMerchandise = () => {
           className="p-2 border border-gray-300 rounded-md w-1/3"
         />
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            resetForm();
+            setIsModalOpen(true);
+          }}
           className="bg-teal-600 text-white px-4 py-3 text-lg rounded-md hover:bg-teal-700"
         >
           + Tambah Merchandise
         </button>
       </div>
 
-      {/* Table */}
       {loading ? (
-        <p>Loading...</p>
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
+          <p className="ml-3">Loading data...</p>
+        </div>
       ) : (
-        <div className='overflow-x-auto bg-white rounded-lg shadow mt-10'>
+        <div className="overflow-x-auto bg-white rounded-lg shadow mt-10">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                {['ID', 'Nama', 'Deskripsi', 'Poin Dibutuhkan', 'Stok', 'Gambar', 'Aksi'].map((header) => (
+                {[
+                  "ID",
+                  "Nama",
+                  "Deskripsi",
+                  "Poin Dibutuhkan",
+                  "Stok",
+                  "Gambar",
+                  "Aksi",
+                ].map((header) => (
                   <th
                     key={header}
                     className="px-6 py-4 bg-teal-600 text-lg font-medium text-white uppercase tracking-wider"
@@ -113,64 +243,104 @@ const ManageMerchandise = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredMerchandises.map((item) => (
-                <tr key={item.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.nama}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.deskripsi}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.poin_dibutuhkan}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{item.stok}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <img src={item.gambar} alt="Gambar Merchandise" className="h-16 w-16 rounded object-cover" />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex space-x-4">
-                      <button
-                        className="text-blue-500 hover:text-blue-600"
-                        onClick={() => {
-                          // Untuk edit merchandise
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="text-red-500 hover:text-red-600"
-                        onClick={() => {
-                          if (confirm('Yakin ingin menghapus merchandise ini?')) {
-                            setMerchandises(merchandises.filter((m) => m.id !== item.id));
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
+              {filteredMerchandises.length > 0 ? (
+                filteredMerchandises.map((item) => (
+                  <tr key={item.ID_MERCHANDISE}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {item.ID_MERCHANDISE}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{item.NAMA}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {item.DESKRIPSI}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {item.POIN_DIBUTUHKAN}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{item.STOK}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {item.URL_GAMBAR ? (
+                        <img
+                          src={formatImageUrl(item.URL_GAMBAR)}
+                          alt="Gambar Merchandise"
+                          className="h-16 w-16 rounded object-cover"
+                          onError={(e) => {
+                            console.error(
+                              "Image failed to load:",
+                              item.URL_GAMBAR
+                            );
+                            e.target.src = "/placeholder-merchandise.png"; // Fallback image
+                            e.target.onerror = null; // Prevent infinite loop
+                          }}
+                        />
+                      ) : (
+                        <div className="h-16 w-16 rounded bg-gray-200 flex items-center justify-center">
+                          <span className="text-gray-500 text-xs">
+                            No Image
+                          </span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-4">
+                        <button
+                          className="text-blue-500 hover:text-blue-600"
+                          onClick={() => handleEdit(item)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-500 hover:text-red-600"
+                          onClick={() => handleDelete(item.ID_MERCHANDISE)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="7"
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
+                    Tidak ada merchandise ditemukan
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* Modal Tambah */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-2/3">
-            <h2 className="text-xl font-bold mb-4">Tambah Merchandise</h2>
-            <form>
-              <div className="grid grid-cols-2 gap-4">
+        <div
+          className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50"
+          onClick={(e) => e.target === e.currentTarget && resetForm()}
+        >
+          <div className="bg-white p-6 rounded-lg w-11/12 md:w-3/5">
+            <h2 className="text-xl font-bold mb-4">
+              {editingId ? "Edit" : "Tambah"} Merchandise
+            </h2>
+            <form onSubmit={handleSubmit}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Nama</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Nama Merchandise <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="nama"
                     value={newMerchandise.nama}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-1">Deskripsi</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium mb-1">
+                    Deskripsi
+                  </label>
                   <textarea
                     name="deskripsi"
                     value={newMerchandise.deskripsi}
@@ -180,49 +350,85 @@ const ManageMerchandise = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Poin Dibutuhkan</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Poin Dibutuhkan <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="poin_dibutuhkan"
                     value={newMerchandise.poin_dibutuhkan}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Stok</label>
+                  <label className="block text-sm font-medium mb-1">
+                    Stok <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="stok"
                     value={newMerchandise.stok}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium mb-1">Gambar (URL)</label>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium mb-1">
+                    Gambar Merchandise
+                  </label>
                   <input
-                    type="text"
-                    name="gambar"
-                    value={newMerchandise.gambar}
-                    onChange={handleInputChange}
-                    placeholder="https://example.com/gambar.jpg"
+                    type="file"
+                    name="gambar_file"
+                    onChange={handleFileChange}
+                    accept="image/jpeg,image/png,image/jpg"
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Format yang diperbolehkan: JPG, PNG, JPEG. Maks: 2MB.
+                  </p>
+
+                  {previewImage && (
+                    <div className="mt-3">
+                      <p className="text-sm text-gray-500 mb-1">Preview:</p>
+                      <div className="relative inline-block">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="h-24 w-24 rounded object-cover"
+                          onError={(e) => {
+                            e.target.src = "/placeholder-merchandise.png";
+                            e.target.onerror = null;
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 text-xs"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setPreviewImage(null);
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex justify-end mt-6">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-300 text-black px-4 py-2 rounded-md mr-2 hover:bg-gray-400"
+                  onClick={resetForm}
+                  className="mr-2 bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400"
                 >
                   Batal
                 </button>
                 <button
-                  type="button"
-                  onClick={handleAddMerchandise}
-                  className="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600"
+                  type="submit"
+                  className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700"
                 >
                   Simpan
                 </button>

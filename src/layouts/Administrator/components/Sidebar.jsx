@@ -78,20 +78,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   return (
     <div className={`bg-white text-black transition-all duration-300 fixed h-full z-50 ${sidebarOpen ? 'w-64' : 'sm:w-20 w-64'} ${sidebarOpen ? 'left-0' : 'sm:left-0 -left-full'}`}>
-      <div className="flex items-center justify-between p-6 border-b border-teal-400">
+      <div className="flex items-center justify-between p-6 border-b border-stone-400">
         {(sidebarOpen || window.innerWidth < 640) && (
           <div className="flex items-center space-x-2 mr-3">
-            <img src="src/assets/reusemartlogo.svg" alt="Logo" className="h-8 w-8" />
+            <img src="src/assets/logo.png" alt="Logo" className="h-10 w-10" />
             <h1 className="text-2xl font-bold">ReuseMart</h1>
           </div>
         )}
         <div className="sm:block hidden">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-teal-600 hover:text-white">
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-stone-600 hover:text-white">
             {sidebarOpen ? <PanelLeftClose size={20} /> : <Menu size={20} />}
           </button>
         </div>
         <div className="sm:hidden block">
-          <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-lg hover:bg-teal-600 hover:text-white">
+          <button onClick={() => setSidebarOpen(false)} className="p-2 rounded-lg hover:bg-stone-600 hover:text-white">
             <PanelLeftClose size={20} />
           </button>
         </div>
@@ -123,6 +123,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             icon={<UserPlus />} 
             text="Manage Penitip" 
             path="manage-penitip" 
+            expanded={sidebarOpen || window.innerWidth < 640} 
+          />
+        )}
+        {hasRole('cs') && hasPermission('manage-diskusi') && (
+          <SidebarItem 
+            icon={<UserPlus />} 
+            text="Manage Diskusi" 
+            path="manage-diskusi" 
             expanded={sidebarOpen || window.innerWidth < 640} 
           />
         )}
@@ -167,7 +175,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         )}
         
         {/* Manage Donasi - Anyone with manage_donasi permission */}
-        {hasRole('Owner') && hasPermission('manage-donasi') && (
+        {hasRole('owner') && hasPermission('manage-donasi') && (
           <SidebarItem 
             icon={<HeartHandshake />} 
             text="Manage Donasi" 
@@ -177,7 +185,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         )}
         
         {/* History Donasi - Anyone with history_donasi permission */}
-        {hasRole('Owner') && hasPermission('history-donasi') && (
+        {hasRole('owner') && hasPermission('history-donasi') && (
           <SidebarItem 
             icon={<History />} 
             text="History Donasi" 
@@ -186,8 +194,25 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           />
         )}
 
+        {hasRole('gudang') && hasPermission('manage-transaksi-penitipan') && (
+          <SidebarItem 
+            icon={<History />} 
+            text="Manage Penitipan" 
+            path="manage-transaksi-penitipan" 
+            expanded={sidebarOpen || window.innerWidth < 640} 
+          />
+        )}
+        {hasRole('gudang') && hasPermission('manage-barang-penitipan') && (
+          <SidebarItem 
+            icon={<History />} 
+            text="Manage Barang Titipan" 
+            path="manage-barang-penitipan" 
+            expanded={sidebarOpen || window.innerWidth < 640} 
+          />
+        )}
+
         {/* Logout is available to everyone */}
-        <div className="absolute bottom-0 w-full border-t border-teal-400 p-2">
+        <div className="absolute bottom-0 w-full border-t border-stone-400 p-2">
   <button 
     onClick={() => {
       if(window.confirm('Yakin ingin logout?')) {

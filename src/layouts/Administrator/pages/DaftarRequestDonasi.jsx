@@ -74,7 +74,7 @@ const DaftarRequestDonasi = () => {
                 {['ID', 'Deskripsi', 'Tanggal Permintaan', 'Status', 'Aksi'].map((header) => (
                   <th
                     key={header}
-                    className="px-6 py-4 bg-teal-600 text-lg font-medium text-white uppercase tracking-wider"
+                    className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider"
                   >
                     {header}
                   </th>

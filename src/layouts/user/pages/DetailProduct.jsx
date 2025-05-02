@@ -112,7 +112,7 @@ const DetailProduct = ({ obat }) => {
 
   return (
     <div className="mt-28">
-      <a href='' className='pl-16 pb-8 underline text-teal-700 text-xl'>
+      <a href='' className='pl-16 pb-8 underline text-stone-700 text-xl'>
         Produk -- Pakaian & Aksesoris -- Kemeja Vintage Pria
       </a>
       
@@ -153,13 +153,13 @@ const DetailProduct = ({ obat }) => {
             value={comment}
             onChange={handleCommentChange}
             placeholder="Write a comment..." 
-            className="w-full border border-gray-200 rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-xl" 
+            className="w-full border border-gray-200 rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-transparent text-xl" 
           />
           
         </div>
         <button 
           onClick={handleSubmit}
-          className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-3 rounded-full flex items-center gap-2 transition-colors"
+          className="bg-stone-600 hover:bg-stone-700 text-white px-5 py-3 rounded-full flex items-center gap-2 transition-colors"
         >
           <Send size={18} />
           <span className="hidden sm:inline text-lg">Send</span>
@@ -200,7 +200,7 @@ const DetailProduct = ({ obat }) => {
                 {/* Comment actions */}
                 <div className="flex items-center gap-4 text-gray-500 text-sm">
                   
-                  <button className="flex items-center gap-1 hover:text-teal-600">
+                  <button className="flex items-center gap-1 hover:text-stone-600">
                     <MessageCircle size={20} />
                     <span className='text-lg'>Reply</span>
                   </button>
@@ -219,14 +219,14 @@ const DetailProduct = ({ obat }) => {
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-semibold text-gray-900 text-lg">{reply.user.name}</span>
                             {reply.user.isOfficial && (
-                              <span className="bg-teal-100 text-teal-800 text-xs px-2 py-0.5 rounded-full">Official</span>
+                              <span className="bg-stone-100 text-stone-800 text-xs px-2 py-0.5 rounded-full">Official</span>
                             )}
                             <span className=" text-gray-500">{reply.time}</span>
                           </div>
                           <p className="text-gray-700 mb-2 text-lg">{reply.comment}</p>
                           <div className="flex items-center gap-4 text-gray-500 text-sm">
                             
-                            <button className="flex items-center gap-1 hover:text-teal-600">
+                            <button className="flex items-center gap-1 hover:text-stone-600">
                               <MessageCircle size={20} />
                               <span className='text-lg'>Reply</span>
                             </button>
@@ -243,7 +243,7 @@ const DetailProduct = ({ obat }) => {
       </div>
       
       {/* Load more button */}
-      <button className="w-full mt-6 py-3 border border-gray-200 rounded-lg text-teal-600 font-medium hover:bg-gray-50 transition-colors">
+      <button className="w-full mt-6 py-3 border border-gray-200 rounded-lg text-stone-600 font-medium hover:bg-gray-50 transition-colors">
         Load More Comments
       </button>
         </div>
@@ -257,10 +257,10 @@ const DetailProduct = ({ obat }) => {
           >
             <div className="py-4">
               <div className='flex w-auto'>
-                <div className='py-2 px-3 mr-2 bg-teal-200 rounded-2xl'>Pakaian & Aksesori</div>
+                <div className='py-2 px-3 mr-2 bg-stone-200 rounded-2xl'>Pakaian & Aksesori</div>
               </div>
               <h1 className='mt-3 text-3xl font-bold'>Kemeja Vintage Pria</h1>
-              <h1 className='mt-5 text-4xl font-bold text-teal-700'>Rp. 120.000</h1>
+              <h1 className='mt-5 text-4xl font-bold text-stone-700'>Rp. 120.000</h1>
               <p className='mt-5 text-xl'>Kondisi : 98% Mulus</p>
               <p className='mt-5 text-xl'>Berat : 3.300 gram</p>
               <p className='mt-5 text-xl'>Garansi : 3 Bulan</p>
@@ -271,8 +271,8 @@ const DetailProduct = ({ obat }) => {
               </p>
 
               <div className='flex w-full mt-10 text-center'>
-                <div className='py-2 px-3 mr-2 border-2 border-teal-600 rounded-lg w-full'>Keranjang</div>
-                <div className='py-2 px-3 mr-2 bg-teal-600 rounded-lg w-full'>Beli Sekarang</div>
+                <div className='py-2 px-3 mr-2 border-2 border-stone-600 rounded-lg w-full'>Keranjang</div>
+                <div className='py-2 px-3 mr-2 bg-stone-600 rounded-lg w-full'>Beli Sekarang</div>
               </div>
             </div>
           </div>

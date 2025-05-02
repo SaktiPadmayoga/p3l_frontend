@@ -14,7 +14,7 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="block sm:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-teal-600 hover:text-white"
+            className="p-2 rounded-lg hover:bg-stone-600 hover:text-white"
           >
             <Menu size={20} />
           </button>

@@ -10,7 +10,7 @@ export default function Profile() {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg rounded-l-2xl">
         <div className="p-6">
-          <h1 className="text-3xl font-bold text-teal-600">User Profile</h1>
+          <h1 className="text-3xl font-bold text-stone-600">User Profile</h1>
         </div>
         <div className="px-2">
           <SidebarItem 
@@ -54,12 +54,12 @@ export default function Profile() {
 function SidebarItem({ icon, text, active, onClick }) {
   return (
     <div 
-      className={`flex items-center text-xl p-3 mb-2 rounded-lg cursor-pointer ${active ? 'bg-teal-50 text-teal-600 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
+      className={`flex items-center text-xl p-3 mb-2 rounded-lg cursor-pointer ${active ? 'bg-stone-50 text-stone-600 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
       onClick={onClick}
     >
       <div className="mr-3">{icon}</div>
       <span>{text}</span>
-      {active && <div className="ml-auto w-1 h-6 bg-teal-600 rounded"></div>}
+      {active && <div className="ml-auto w-1 h-6 bg-stone-600 rounded"></div>}
     </div>
   );
 }
@@ -74,7 +74,7 @@ function ProfilePage() {
             alt="Profile" 
             className="w-24 h-24 rounded-full object-cover"
           />
-          <button className="absolute bottom-0 right-0 bg-teal-500 text-white p-1 rounded-full">
+          <button className="absolute bottom-0 right-0 bg-stone-500 text-white p-1 rounded-full">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
@@ -144,7 +144,7 @@ function ProfilePage() {
       </div>
       
       <div className="mt-8">
-        <button className="bg-teal-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-teal-700">
+        <button className="bg-stone-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-stone-700">
           Save Changes
         </button>
       </div>
@@ -209,10 +209,10 @@ function TransactionsPage() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Transaction History</h2>
         <div className="flex space-x-2">
-          <button className="bg-teal-50 text-teal-600 px-4 py-2 rounded-lg hover:bg-teal-100">
+          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">
             Filter
           </button>
-          <button className="bg-teal-50 text-teal-600 px-4 py-2 rounded-lg hover:bg-teal-100">
+          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">
             Export
           </button>
         </div>
@@ -267,7 +267,7 @@ function TransactionsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button className="text-teal-600 hover:text-teal-800">
+                  <button className="text-stone-600 hover:text-stone-800">
                     View Details
                   </button>
                 </td>
@@ -282,7 +282,7 @@ function TransactionsPage() {
           Showing 1 to 5 of 5 entries
         </div>
         <div className="flex space-x-1">
-          <button className="px-3 py-1 bg-teal-50 text-teal-600 rounded">1</button>
+          <button className="px-3 py-1 bg-stone-50 text-stone-600 rounded">1</button>
         </div>
       </div>
     </div>

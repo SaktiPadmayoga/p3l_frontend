@@ -24,6 +24,9 @@ import ManageMerchandise from "./layouts/administrator/pages/ManageMerchandise";
 import ManageRequestDonasi from "./layouts/administrator/pages/ManageRequestDonasi";
 import DaftarRequestDonasi from "./layouts/administrator/pages/DaftarRequestDonasi";
 import HistoryDonasi from "./layouts/administrator/pages/HistoryDonasi";
+import ManageBarangTitipan from "./layouts/administrator/pages/ManageBarangTitipan";
+import ManageTransaksiPenitipan from "./layouts/administrator/pages/ManageTransaksiPenitipan";
+import ManageDiskusi from "./layouts/administrator/pages/ManageDiskusi";
 import DashboardContent from "./layouts/administrator/pages/DashboardContent";
 import AuthService from "./services/authService";
 
@@ -115,6 +118,15 @@ function App() {
             element={<DaftarRequestDonasi />}
           />
           <Route path="history-donasi" element={<HistoryDonasi />} />
+          <Route
+            path="manage-barang-titipan"
+            element={<ManageBarangTitipan />}
+          />
+          <Route
+            path="manage-transaksi-penitipan"
+            element={<ManageTransaksiPenitipan />}
+          />
+          <Route path="manage-diskusi" element={<ManageDiskusi />} />  
         </Route>
 
         {/* User layout */}

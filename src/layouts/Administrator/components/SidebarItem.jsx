@@ -8,8 +8,8 @@ const SidebarItem = ({ icon, text, expanded, path }) => {
             to={path} 
             className={({ isActive }) => 
                 `flex items-center p-3 mt-2 transition-all duration-300 ease-in-out transform 
-                ${isActive ? 'bg-teal-600 text-white shadow-sm' 
-                : 'hover:bg-teal-600 hover:text-white'} cursor-pointer mx-4 rounded-lg`
+                ${isActive ? 'bg-stone-600 text-white shadow-sm' 
+                : 'hover:bg-stone-600 hover:text-white'} cursor-pointer mx-4 rounded-lg`
             }
         >
             <div className="flex items-center justify-center ">{icon}</div>

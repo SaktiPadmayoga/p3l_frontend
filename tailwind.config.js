@@ -3,7 +3,11 @@ module.exports = {
     mode: 'jit',
     content: ["./src/**/*.{html,js,jsx,ts,tsx}"], // Sesuaikan dengan struktur proyek
     theme: {
-      extend: {},
+      extend: {
+        fontFamily: {
+          display: ["Oswald", "sans-serif"],
+        },
+      },
     },
     plugins: [require('tailwind-scrollbar-hide')],
   };

@@ -55,8 +55,8 @@ const UserNavbar = () => {
   const linkClasses = (path) =>
     `px-3 py-2 rounded-md text-xl font-medium transition duration-150 flex items-center ${
       isActive(path)
-        ? "text-teal-600 bg-gray-100"
-        : "text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+        ? "text-stone-500 bg-gray-100"
+        : "text-gray-700 hover:text-stone-500 hover:bg-gray-100"
     }`;
 
   const handleLogout = () => {
@@ -84,10 +84,10 @@ const UserNavbar = () => {
             <div className="flex-shrink-0 flex items-center">
               <img
                 className="h-8 w-8"
-                src="/src/assets/reusemartlogo.svg"
+                src="/src/assets/logo.png"
                 alt="ReuseMart"
               />
-              <span className="ml-2 text-2xl font-bold text-teal-600">
+              <span className="ml-2 text-2xl font-bold text-stone-500">
                 ReuseMart
               </span>
             </div>
@@ -110,9 +110,9 @@ const UserNavbar = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="w-full px-5 py-3 text-gray-700 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-600 text-lg"
+              className="w-full px-5 py-3 text-gray-700 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-500 text-lg"
             />
-            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 text-teal-600">
+            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 text-stone-500">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-7 w-7"
@@ -137,7 +137,7 @@ const UserNavbar = () => {
                 {/* Cart Icon */}
                 <Link
                   to="/cart"
-                  className="p-2 rounded-full text-gray-600 hover:text-teal-600 hover:bg-gray-100 relative"
+                  className="p-2 rounded-full text-gray-600 hover:text-stone-500 hover:bg-gray-100 relative"
                 >
                   <ShoppingCart className="h-6 w-6" />
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
@@ -148,7 +148,7 @@ const UserNavbar = () => {
                 {/* Notification Icon */}
                 <Link
                   to="/notifications"
-                  className="ml-4 p-2 rounded-full text-gray-600 hover:text-teal-600 hover:bg-gray-100 relative"
+                  className="ml-4 p-2 rounded-full text-gray-600 hover:text-stone-500 hover:bg-gray-100 relative"
                 >
                   <Bell className="h-6 w-6" />
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
@@ -158,7 +158,7 @@ const UserNavbar = () => {
 
                 {/* Avatar */}
                 <Link to="/profile" className="ml-4">
-                  <div className="h-8 w-8 rounded-full bg-teal-500 flex items-center justify-center text-white font-semibold">
+                  <div className="h-8 w-8 rounded-full bg-stone-500 flex items-center justify-center text-white font-semibold">
                     {userData ? getInitials(userData.nama) : "US"}
                   </div>
                 </Link>
@@ -177,7 +177,7 @@ const UserNavbar = () => {
                 {/* Login Button */}
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-xl font-medium text-teal-600 rounded-md hover:bg-gray-100 hover:text-teal-700 flex items-center"
+                  className="px-4 py-2 text-xl font-medium text-stone-500 rounded-md hover:bg-gray-100 hover:text-stone-700 flex items-center"
                 >
                   <LogIn className="mr-1 h-4 w-4" />
                   Login
@@ -186,7 +186,7 @@ const UserNavbar = () => {
                 {/* Register Button */}
                 <Link
                   to="/register-selection"
-                  className="ml-3 px-4 py-2 text-xl font-medium text-white bg-teal-600 rounded-md hover:bg-teal-700 flex items-center"
+                  className="ml-3 px-4 py-2 text-xl font-medium text-white bg-stone-500 rounded-md hover:bg-stone-700 flex items-center"
                 >
                   <UserPlus className="mr-1 h-4 w-4" />
                   Register
@@ -199,7 +199,7 @@ const UserNavbar = () => {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-teal-600 hover:bg-gray-100 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-stone-500 hover:bg-gray-100 focus:outline-none"
             >
               {isMenuOpen ? (
                 <X className="block h-6 w-6" />
@@ -216,7 +216,7 @@ const UserNavbar = () => {
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
           <Link
             to="/"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
           >
             <span className="flex items-center">
@@ -226,7 +226,7 @@ const UserNavbar = () => {
           </Link>
           <Link
             to="/catalogue"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
           >
             <span className="flex items-center">
@@ -236,7 +236,7 @@ const UserNavbar = () => {
           </Link>
           <Link
             to="/about"
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
             onClick={() => setIsMenuOpen(false)}
           >
             <span className="flex items-center">
@@ -249,7 +249,7 @@ const UserNavbar = () => {
             <div className="border-t pt-4 pb-3">
               <div className="flex items-center px-4">
                 <div className="flex-shrink-0">
-                  <div className="h-10 w-10 rounded-full bg-teal-500 flex items-center justify-center text-white font-semibold">
+                  <div className="h-10 w-10 rounded-full bg-stone-500 flex items-center justify-center text-white font-semibold">
                     {userData ? getInitials(userData.nama) : "US"}
                   </div>
                 </div>
@@ -265,7 +265,7 @@ const UserNavbar = () => {
               <div className="mt-3 space-y-1 px-2">
                 <Link
                   to="/cart"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="flex items-center">
@@ -278,7 +278,7 @@ const UserNavbar = () => {
                 </Link>
                 <Link
                   to="/notifications"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="flex items-center">
@@ -291,7 +291,7 @@ const UserNavbar = () => {
                 </Link>
                 <Link
                   to="/profile"
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-600 hover:bg-gray-100"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Profile
@@ -312,7 +312,7 @@ const UserNavbar = () => {
             <div className="pt-4 pb-3 border-t flex flex-col space-y-2 px-3">
               <Link
                 to="/login"
-                className="flex items-center justify-center px-4 py-2 text-base font-medium text-teal-600 rounded-md border border-teal-600"
+                className="flex items-center justify-center px-4 py-2 text-base font-medium text-stone-500 rounded-md border border-stone-500"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <LogIn className="mr-2 h-5 w-5" />
@@ -320,7 +320,7 @@ const UserNavbar = () => {
               </Link>
               <Link
                 to="/register"
-                className="flex items-center justify-center px-4 py-2 text-base font-medium text-white bg-teal-600 rounded-md"
+                className="flex items-center justify-center px-4 py-2 text-base font-medium text-white bg-stone-500 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <UserPlus className="mr-2 h-5 w-5" />

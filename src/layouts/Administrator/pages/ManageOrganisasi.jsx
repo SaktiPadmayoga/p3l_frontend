@@ -208,7 +208,7 @@ const ManageOrganisasi = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-stone-600"></div>
           <p className="ml-3">Loading data...</p>
         </div>
       ) : (
@@ -229,7 +229,7 @@ const ManageOrganisasi = () => {
                 ].map((header) => (
                   <th
                     key={header}
-                    className="px-6 py-4 bg-teal-600 text-lg font-medium text-white uppercase tracking-wider"
+                    className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider"
                   >
                     {header}
                   </th>
@@ -443,7 +443,7 @@ const ManageOrganisasi = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700"
+                  className="bg-stone-600 text-white px-4 py-2 rounded-md hover:bg-stone-700"
                 >
                   Simpan
                 </button>

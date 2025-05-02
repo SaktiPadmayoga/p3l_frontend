@@ -71,9 +71,9 @@ const scrollRight = () => {
             <h3 className="text-lg font-semibold">{product.name}</h3>
             <p className="text-sm text-gray-500">{product.category}</p>
             <div className="flex justify-between items-center mt-2">
-                <span className="font-bold text-2xl text-teal-800">${product.price.toFixed(2)}</span>
+                <span className="font-bold text-2xl text-stone-800">${product.price.toFixed(2)}</span>
                 <div className="flex space-x-2">
-                <button className="bg-gray-100  text-teal-800 px-2 py-1 rounded">Add to Cart</button>            
+                <button className="bg-gray-100  text-stone-800 px-2 py-1 rounded">Add to Cart</button>            
                 </div>
             </div>
           </div>

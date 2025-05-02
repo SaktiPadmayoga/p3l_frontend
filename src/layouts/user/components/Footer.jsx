@@ -117,13 +117,13 @@ const Footer = () => {
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                         {categories.map((category, index) => (
                             <div key={index} className="bg-white rounded-lg  p-4 ">
-                                <a href="#" className="text-lg font-semibold text-gray-900 mb-3 hover:text-teal-600 transition-colors">{category.name}</a>
+                                <a href="#" className="text-lg font-semibold text-gray-900 mb-3 hover:text-stone-600 transition-colors">{category.name}</a>
                                 <ul className="space-y-2">
                                     {category.subcategories.map((subcategory, subIndex) => (
                                         <li key={subIndex}>
                                             <a 
                                                 href="#" 
-                                                className="text-gray-600 hover:text-teal-600 transition-colors text-sm"
+                                                className="text-gray-600 hover:text-stone-600 transition-colors text-sm"
                                             >
                                                 {subcategory}
                                             </a>
@@ -136,16 +136,16 @@ const Footer = () => {
                 </div>
             </section>
 
-            <hr className="text-teal-800" />
+            <hr className="text-stone-800" />
 
             {/* Footer */}
             <footer className="bg-white mx-16 mb-5">
-                <div className=" pt-16 pb-8">
+                <div className=" pt-16 pb-8 mx-3">
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mb-6">
                         <div>
                         <div className="flex-shrink-0 flex items-center">
-                            <img className="h-16 w-16" src="/src/assets/reusemartlogo.svg" alt="ReuseMart" />
-                            <span className="ml-2 text-4xl font-bold text-teal-600">ReuseMart</span>
+                            <img className="h-16 w-16" src="/src/assets/logo.png" alt="ReuseMart" />
+                            <span className="ml-5 text-4xl font-bold text-stone-600">ReuseMart</span>
                         </div>
                             <p className="flex mt-4 text-lg max-w-md leading-relaxed text-gray-500 text-justify">
                             ReuseMart adalah platform jual beli barang bekas terpercaya di Yogyakarta, mendukung transaksi mudah dan ramah lingkungan.
@@ -157,7 +157,7 @@ const Footer = () => {
                                         href="#"
                                         rel="noreferrer"
                                         target="_blank"
-                                        className="text-teal-700 transition hover:text-teal-700/75"
+                                        className="text-stone-700 transition hover:text-stone-700/75"
                                     >
                                         <span className="sr-only">Facebook</span>
                                         <svg className="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -175,7 +175,7 @@ const Footer = () => {
                                         href="#"
                                         rel="noreferrer"
                                         target="_blank"
-                                        className="text-teal-700 transition hover:text-teal-700/75"
+                                        className="text-stone-700 transition hover:text-stone-700/75"
                                     >
                                         <span className="sr-only">Instagram</span>
                                         <svg className="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -193,7 +193,7 @@ const Footer = () => {
                                         href="#"
                                         rel="noreferrer"
                                         target="_blank"
-                                        className="text-teal-700 transition hover:text-teal-700/75"
+                                        className="text-stone-700 transition hover:text-stone-700/75"
                                     >
                                         <span className="sr-only">Twitter</span>
                                         <svg className="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -209,7 +209,7 @@ const Footer = () => {
                                         href="#"
                                         rel="noreferrer"
                                         target="_blank"
-                                        className="text-teal-700 transition hover:text-teal-700/75"
+                                        className="text-stone-700 transition hover:text-stone-700/75"
                                     >
                                         <span className="sr-only">GitHub</span>
                                         <svg className="size-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -230,25 +230,25 @@ const Footer = () => {
 
                                 <ul className="mt-6 space-y-4">
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Company History
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Meet the Team
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Employee Handbook
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Careers
                                         </a>
                                     </li>
@@ -260,25 +260,25 @@ const Footer = () => {
 
                                 <ul className="mt-6 space-y-4">
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Web Development
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Web Design
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Marketing
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Google Ads
                                         </a>
                                     </li>
@@ -290,26 +290,26 @@ const Footer = () => {
 
                                 <ul className="mt-6 space-y-4">
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             FAQs
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a className="text-gray-700 transition hover:text-teal-600" href="#">
+                                        <a className="text-gray-700 transition hover:text-stone-600" href="#">
                                             Support
                                         </a>
                                     </li>
 
                                     <li>
                                         <a className="group flex items-center gap-1.5" href="#">
-                                            <span className="text-gray-700 transition group-hover:text-teal-600">
+                                            <span className="text-gray-700 transition group-hover:text-stone-600">
                                                 Live Chat
                                             </span>
 
                                             <span className="relative flex size-2">
-                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
-                                                <span className="relative inline-flex size-2 rounded-full bg-teal-500"></span>
+                                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-stone-400 opacity-75"></span>
+                                                <span className="relative inline-flex size-2 rounded-full bg-stone-500"></span>
                                             </span>
                                         </a>
                                     </li>
@@ -397,13 +397,13 @@ const Footer = () => {
                             <p className=" text-gray-500">
                                 <span className="block sm:inline">All rights reserved. </span>
 
-                                <a className="inline-block text-teal-600 underline transition hover:text-teal-600/75" href="#">
+                                <a className="inline-block text-stone-600 underline transition hover:text-stone-600/75" href="#">
                                     Terms & Conditions 
                                 </a>
 
                                 <span>&middot;</span>
 
-                                <a className="inline-block text-teal-600 underline transition hover:text-teal-600/75" href="#">
+                                <a className="inline-block text-stone-600 underline transition hover:text-stone-600/75" href="#">
                                     Privacy Policy
                                 </a>
                             </p>

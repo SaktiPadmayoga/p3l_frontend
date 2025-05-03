@@ -134,7 +134,7 @@ const UserNavbar = () => {
           <div className="hidden md:flex items-center">
             {isLoggedIn ? (
               <>
-                {/* Cart Icon */}
+                0{/* Cart Icon */}
                 <Link
                   to="/cart"
                   className="p-2 rounded-full text-gray-600 hover:text-stone-500 hover:bg-gray-100 relative"
@@ -144,7 +144,6 @@ const UserNavbar = () => {
                     3
                   </span>
                 </Link>
-
                 {/* Notification Icon */}
                 <Link
                   to="/notifications"
@@ -155,14 +154,12 @@ const UserNavbar = () => {
                     2
                   </span>
                 </Link>
-
                 {/* Avatar */}
                 <Link to="/profile" className="ml-4">
                   <div className="h-8 w-8 rounded-full bg-stone-500 flex items-center justify-center text-white font-semibold">
                     {userData ? getInitials(userData.nama) : "US"}
                   </div>
                 </Link>
-
                 {/* Logout button */}
                 <button
                   onClick={handleLogout}
@@ -319,7 +316,7 @@ const UserNavbar = () => {
                 Login
               </Link>
               <Link
-                to="/register"
+                to="/register-selection"
                 className="flex items-center justify-center px-4 py-2 text-base font-medium text-white bg-stone-500 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >

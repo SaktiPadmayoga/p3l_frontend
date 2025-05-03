@@ -264,7 +264,7 @@ const ManagePegawai = () => {
           onClick={openModal}
           onKeyDown={(e) => e.key === "Enter" && openModal()}
           tabIndex={0}
-          className="bg-teal-600 text-white px-4 py-3 text-lg rounded-md hover:bg-teal-700 cursor-pointer flex items-center justify-center"
+          className="bg-stone-600 text-white px-4 py-3 text-lg rounded-md hover:bg-stone-700 cursor-pointer flex items-center justify-center"
         >
           + Tambah Pegawai
         </div>
@@ -273,7 +273,7 @@ const ManagePegawai = () => {
       {/* Tabel Pegawai */}
       {loading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-stone-600"></div>
           <p className="ml-3">Loading data...</p>
         </div>
       ) : (
@@ -293,7 +293,7 @@ const ManagePegawai = () => {
                 ].map((head) => (
                   <th
                     key={head}
-                    className="px-6 py-3 bg-teal-600 text-md leading-4 font-medium text-white uppercase tracking-wider"
+                    className="px-6 py-3 bg-stone-600 text-md leading-4 font-medium text-white uppercase tracking-wider"
                   >
                     <div className="flex cursor-pointer">
                       <span className="mr-2">{head}</span>
@@ -499,7 +499,7 @@ const ManagePegawai = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 cursor-pointer"
+                  className="bg-stone-500 text-white px-4 py-2 rounded-md hover:bg-stone-600 cursor-pointer"
                 >
                   {editingEmployeeId ? "Update" : "Simpan"}
                 </button>

@@ -31,7 +31,7 @@ const HomePage = () => {
               <div className="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
                 <a
                   href="#"
-                  className="rounded-md bg-teal-800 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="rounded-md bg-stone-800 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-stone-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   Get started
                 </a>
@@ -59,7 +59,7 @@ const HomePage = () => {
             <h2 class="text-3sxl font-semibold tracking-tight text-balance  sm:text-6xl">Boost your productivity. Start using our app today.</h2>
             <p class="mt-6 text-lg/8 text-pretty text-gray-700">Ac euismod vel sit maecenas id pellentesque eu sed consectetur. Malesuada adipiscing sagittis vel nulla.</p>
             <div class="mt-10 flex items-center justify-center gap-x-6 lg:justify-start">
-              <a href="#" class="rounded-md bg-teal-800 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-teal-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get started</a>
+              <a href="#" class="rounded-md bg-stone-800 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-stone-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Get started</a>
               <a href="#" class="text-sm/6 font-semibold ">Learn more <span aria-hidden="true">→</span></a>
             </div>
           </div>

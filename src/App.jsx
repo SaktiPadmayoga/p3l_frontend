@@ -16,15 +16,18 @@ import Catalogue from "./layouts/user/pages/Catalogue";
 import UserNavbar from "./layouts/user/components/UserNavbar";
 import DetailProduct from "./layouts/user/pages/DetailProduct";
 import Profile from "./layouts/user/pages/Profile";
-import ManagePegawai from "./layouts/administrator/pages/ManagePegawai";
-import ManagePenitip from "./layouts/administrator/pages/ManagePenitip";
-import ManageJabatan from "./layouts/administrator/pages/ManageJabatan";
-import ManageOrganisasi from "./layouts/administrator/pages/ManageOrganisasi";
-import ManageMerchandise from "./layouts/administrator/pages/ManageMerchandise";
-import ManageRequestDonasi from "./layouts/administrator/pages/ManageRequestDonasi";
-import DaftarRequestDonasi from "./layouts/administrator/pages/DaftarRequestDonasi";
-import HistoryDonasi from "./layouts/administrator/pages/HistoryDonasi";
-import DashboardContent from "./layouts/administrator/pages/DashboardContent";
+import ManagePegawai from "./layouts/Administrator/pages/ManagePegawai";
+import ManagePenitip from "./layouts/Administrator/pages/ManagePenitip";
+import ManageJabatan from "./layouts/Administrator/pages/ManageJabatan";
+import ManageOrganisasi from "./layouts/Administrator/pages/ManageOrganisasi";
+import ManageMerchandise from "./layouts/Administrator/pages/ManageMerchandise";
+import ManageRequestDonasi from "./layouts/Administrator/pages/ManageRequestDonasi";
+import DaftarRequestDonasi from "./layouts/Administrator/pages/DaftarRequestDonasi";
+import HistoryDonasi from "./layouts/Administrator/pages/HistoryDonasi";
+import ManageBarangTitipan from "./layouts/Administrator/pages/ManageBarangTitipan";
+import ManageTransaksiPenitipan from "./layouts/Administrator/pages/ManageTransaksiPenitipan";
+import ManageDiskusi from "./layouts/Administrator/pages/ManageDiskusi";
+import DashboardContent from "./layouts/Administrator/pages/DashboardContent";
 import AuthService from "./services/authService";
 
 // Layout component that includes navbar and footer
@@ -115,6 +118,15 @@ function App() {
             element={<DaftarRequestDonasi />}
           />
           <Route path="history-donasi" element={<HistoryDonasi />} />
+          <Route
+            path="manage-barang-penitipan"
+            element={<ManageBarangTitipan />}
+          />
+          <Route
+            path="manage-transaksi-penitipan"
+            element={<ManageTransaksiPenitipan />}
+          />
+          <Route path="manage-diskusi" element={<ManageDiskusi />} />
         </Route>
 
         {/* User layout */}

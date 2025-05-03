@@ -119,7 +119,7 @@ const ManageJabatan = () => {
         <div
           role="button"
           onClick={openModal}
-          className="bg-teal-600 text-white px-4 py-3 text-lg rounded-md hover:bg-teal-700 cursor-pointer flex items-center justify-center"
+          className="bg-stone-500 text-white px-4 py-3 text-lg rounded-md hover:bg-stone-700 cursor-pointer flex items-center justify-center"
         >
           + Tambah Jabatan
         </div>
@@ -127,7 +127,7 @@ const ManageJabatan = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-stone-500"></div>
           <p className="ml-3">Loading data...</p>
         </div>
       ) : (
@@ -135,13 +135,13 @@ const ManageJabatan = () => {
           <table className="min-w-full divide-y divide-gray-200 rounded-2xl shadow">
             <thead>
               <tr>
-                <th className="px-6 py-3 bg-teal-600 text-md font-medium text-white uppercase">
+                <th className="px-6 py-3 bg-stone-500 text-md font-medium text-white uppercase">
                   ID
                 </th>
-                <th className="px-6 py-3 bg-teal-600 text-md font-medium text-white uppercase">
+                <th className="px-6 py-3 bg-stone-500 text-md font-medium text-white uppercase">
                   Nama Jabatan
                 </th>
-                <th className="px-6 py-3 bg-teal-600 text-md font-medium text-white uppercase">
+                <th className="px-6 py-3 bg-stone-500 text-md font-medium text-white uppercase">
                   Aksi
                 </th>
               </tr>
@@ -160,13 +160,13 @@ const ManageJabatan = () => {
                       <div className="flex space-x-4">
                         <button
                           onClick={() => handleEdit(pos)}
-                          className="text-blue-500 hover:text-blue-600"
+                          className="text-blue-500 hover:text-blue-500"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDelete(pos.ID_JABATAN)}
-                          className="text-red-500 hover:text-red-600"
+                          className="text-red-500 hover:text-red-500"
                         >
                           Delete
                         </button>
@@ -215,7 +215,7 @@ const ManageJabatan = () => {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700"
+                  className="bg-stone-500 text-white px-4 py-2 rounded-md hover:bg-stone-700"
                 >
                   Simpan
                 </button>

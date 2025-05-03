@@ -285,9 +285,9 @@ export default function Catalogue() {
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="text-sm text-gray-500">{product.category}</p>
         <div className="flex justify-between items-center mt-2">
-            <span className="font-bold text-2xl text-teal-800">${product.price.toFixed(2)}</span>
+            <span className="font-bold text-2xl text-stone-800">${product.price.toFixed(2)}</span>
             <div className="flex space-x-2">
-            <button className="bg-gray-100  text-teal-800 px-2 py-1 rounded">Add to Cart</button>            
+            <button className="bg-gray-100  text-stone-800 px-2 py-1 rounded">Add to Cart</button>            
             </div>
         </div>
       </div>
@@ -343,7 +343,7 @@ export default function Catalogue() {
     <div className="">
       {/* Hero Section */}
       <div className="relative h-96 w-full bg-[url('/src/assets/hero-bg.jpg')]  bg-cover bg-no-repeat bg-center overflow-hidden">
-        <div className="absolute inset-0 flex-row items-center bg-gradient-to-t from-teal-900/90 to-teal-700/40">
+        <div className="absolute inset-0 flex-row items-center bg-gradient-to-t from-stone-900/90 to-stone-700/40">
           <div>
             <h1 className=" mt-60 text-9xl justify-center text-center font-bold text-white ">Catalog Produk</h1>
           </div>
@@ -356,7 +356,7 @@ export default function Catalogue() {
             <h2 className="text-4xl font-bold mb-4">Temukan berbagai kebutuhanmu</h2>
             <div className="flex items-center border border-gray-300 rounded-full p-1">
               <input type="text" placeholder="Search..." className="flex-1 px-32 py-2 rounded-full" />
-              <button className="bg-teal-800 text-white px-4 py-2 rounded-full">
+              <button className="bg-stone-800 text-white px-4 py-2 rounded-full">
                 <Search size={32} />
               </button>
             </div>
@@ -404,7 +404,7 @@ export default function Catalogue() {
 
             {/* Products Grid */}
             <div className="flex-1">
-                <div className="grid grid-cols-4 gap-2 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-8">
                     {products.map(product => (
                     <ProductCard key={product.id} product={product} />
                     ))}
@@ -464,7 +464,7 @@ export default function Catalogue() {
             </div>
         </div>
       {/* Newsletter */}
-      <div className="bg-teal-900 text-white p-8 m-16 rounded-2xl">
+      <div className="bg-stone-900 text-white p-8 m-16 rounded-2xl">
             <h2 className="text-2xl font-bold mb-1">Ready to Get</h2>
             <h2 className="text-2xl font-bold">Our New Stuff?</h2>
             

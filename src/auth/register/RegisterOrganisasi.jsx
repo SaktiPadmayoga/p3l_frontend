@@ -97,13 +97,13 @@ const RegisterOrganization = () => {
   return (
     <div
       className="flex items-center justify-center bg-cover bg-center bg-no-repeat min-h-screen py-10"
-      style={{ backgroundImage: `url(${bg})` }}
+      // style={{ backgroundImage: `url(${bg})` }}
     >
       <div className="rounded-xl overflow-hidden flex flex-col md:flex-row max-w-5xl w-full mx-4 shadow-2xl bg-white/60">
         {/* Logo Section */}
         <div className="md:w-1/2 flex flex-col items-center justify-center p-10 text-center sm:ml-14">
           <img
-            src="src/assets/reusemartlogo.svg"
+            src="src/assets/logo.png"
             alt="Logo"
             className="w-80 object-contain flex justify-center items-center"
           />
@@ -119,7 +119,7 @@ const RegisterOrganization = () => {
             <a className="flex items-center mb-6 text-3xl font-semibold text-black justify-center">
               <img
                 className="w-8 h-8 mr-3"
-                src="src/assets/reusemartlogo.svg"
+                src="src/assets/logo.png"
                 alt="ReuseMart Logo"
               />
               ReuseMart
@@ -143,7 +143,7 @@ const RegisterOrganization = () => {
                   name="namaOrganisasi"
                   value={formData.namaOrganisasi}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="Masukkan nama organisasi"
                   required
                 />
@@ -163,7 +163,7 @@ const RegisterOrganization = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="organisasi@example.com"
                   required
                 />
@@ -183,7 +183,7 @@ const RegisterOrganization = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="••••••••"
                   required
                 />
@@ -203,7 +203,7 @@ const RegisterOrganization = () => {
                   rows="2"
                   value={formData.alamat}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="Masukkan alamat lengkap organisasi"
                   required
                 ></textarea>
@@ -223,7 +223,7 @@ const RegisterOrganization = () => {
                   name="notlp"
                   value={formData.notlp}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="Masukkan nomor telepon organisasi"
                   required
                 />
@@ -243,7 +243,7 @@ const RegisterOrganization = () => {
                   rows="3"
                   value={formData.deskripsi}
                   onChange={handleChange}
-                  className="bg-teal-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-teal-600 focus:border-teal-600 block w-full p-2.5"
+                  className="bg-stone-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-stone-600 focus:border-stone-600 block w-full p-2.5"
                   placeholder="Ceritakan tentang organisasi Anda"
                   required
                 ></textarea>
@@ -260,7 +260,7 @@ const RegisterOrganization = () => {
                 <div className="flex items-center justify-center w-full">
                   <label
                     htmlFor="logo"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 hover:bg-teal-100"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-stone-50 hover:bg-stone-100"
                   >
                     {logoPreview ? (
                       <img
@@ -298,7 +298,7 @@ const RegisterOrganization = () => {
               <div className="flex items-center text-center">
                 <button
                   type="submit"
-                  className="w-full text-white bg-teal-500 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-teal-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                  className="w-full text-white bg-stone-500 hover:bg-stone-600 focus:ring-4 focus:outline-none focus:ring-stone-300 font-medium rounded-lg text-sm px-5 py-2.5"
                 >
                   Daftar Organisasi
                 </button>
@@ -309,7 +309,7 @@ const RegisterOrganization = () => {
                 Sudah memiliki akun?{" "}
                 <a
                   href="/login"
-                  className="font-medium text-teal-600 hover:underline"
+                  className="font-medium text-stone-600 hover:underline"
                 >
                   Masuk
                 </a>
@@ -319,7 +319,7 @@ const RegisterOrganization = () => {
               <p className="text-sm font-light text-gray-500">
                 <Link
                   to="/register-selection"
-                  className="font-medium text-teal-600 hover:underline"
+                  className="font-medium text-stone-600 hover:underline"
                 >
                   Kembali ke pemilihan jenis akun
                 </Link>

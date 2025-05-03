@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import AuthService from "../../../services/authService"; // Pastikan path ini sesuai
+import AuthService from "../../../services/authService";
 
 const DaftarRequestDonasi = () => {
   const [requests, setRequests] = useState([]);
@@ -11,10 +11,9 @@ const DaftarRequestDonasi = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [items, setItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(""); // Add search functionality
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Ambil data permintaan donasi dari backend
     const fetchRequests = async () => {
       try {
         const response = await axios.get(
@@ -25,7 +24,6 @@ const DaftarRequestDonasi = () => {
             },
           }
         );
-        console.log(response.data); // Tambahkan ini untuk debug
         setRequests(response.data);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -38,7 +36,7 @@ const DaftarRequestDonasi = () => {
   }, []);
 
   const handleApproval = async (id, newStatus) => {
-    const pegawaiId = AuthService.getCurrentUser().ID_PEGAWAI; // Ambil ID pegawai dari local storage
+    const pegawaiId = AuthService.getCurrentUser().ID_PEGAWAI;
     const requestItem = requests.find((req) => req.ID_REQUEST === id);
 
     if (!requestItem) {
@@ -50,7 +48,7 @@ const DaftarRequestDonasi = () => {
       ID_PEGAWAI: pegawaiId,
       ID_ORGANISASI: requestItem.ID_ORGANISASI,
       DESKRIPSI_PERMINTAAN: requestItem.DESKRIPSI_PERMINTAAN,
-      TANGGAL_PERMINTAAN: new Date().toISOString(), // Tanggal permintaan saat ini
+      TANGGAL_PERMINTAAN: new Date().toISOString(),
       STATUS: newStatus,
     };
 
@@ -79,9 +77,8 @@ const DaftarRequestDonasi = () => {
   const openModal = async (id) => {
     setSelectedRequestId(id);
     setIsModalOpen(true);
-    setSearchTerm(""); // Reset search term when opening modal
+    setSearchTerm("");
 
-    // Fetch semua barang titipan tanpa filter status
     setLoadingItems(true);
     try {
       const response = await axios.get(
@@ -93,14 +90,17 @@ const DaftarRequestDonasi = () => {
         }
       );
 
-      // Konversi response data ke format yang dibutuhkan table
-      const formattedItems = response.data.map((item) => ({
-        id: item.KODE_PRODUK,
-        name: item.NAMA || "Barang tanpa nama",
-        condition: item.KONDISI || "Tidak diketahui",
-        warrantyDate: item.TANGGAL_GARANSI || "-",
-        status: item.STATUS,
-      }));
+      const formattedItems = response.data.map((item) => {
+        const kodeProduk = String(item.KODE_PRODUK);
+        return {
+          id: kodeProduk,
+          name: item.NAMA || "Barang tanpa nama",
+          condition: item.KONDISI || "Tidak diketahui",
+          warrantyDate: item.TANGGAL_GARANSI || "-",
+          status: item.STATUS,
+          kode: kodeProduk,
+        };
+      });
 
       setItems(formattedItems);
     } catch (error) {
@@ -118,11 +118,22 @@ const DaftarRequestDonasi = () => {
   const handleConfirmSelection = async () => {
     if (selectedRequestId && selectedItem) {
       try {
-        // Create a donation with the selected item
+        // 1. Update the item status to "telah didonasikan"
+        await axios.put(
+          `http://localhost:8000/api/owner/barang-titipan-donasi/${selectedItem.id}`,
+          { STATUS: "telah didonasikan" },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        // 2. Create the donation record
         await axios.post(
           "http://localhost:8000/api/owner/manage-donasi",
           {
-            KODE_PRODUK: selectedItem.id,
+            KODE_PRODUK: String(selectedItem.id),
             ID_REQUEST: selectedRequestId,
           },
           {
@@ -132,26 +143,53 @@ const DaftarRequestDonasi = () => {
           }
         );
 
-        // Update the request status
-        await handleApproval(selectedRequestId, "dikonfirmasi");
+        // 3. Update the request status to "dikonfirmasi"
+        const pegawaiId = AuthService.getCurrentUser().ID_PEGAWAI;
+        await axios.put(
+          `http://localhost:8000/api/owner/request-donasi/${selectedRequestId}`,
+          {
+            ID_PEGAWAI: pegawaiId,
+            STATUS: "dikonfirmasi",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        // Update local state
+        setRequests(
+          requests.map((request) =>
+            request.ID_REQUEST === selectedRequestId
+              ? { ...request, STATUS: "dikonfirmasi" }
+              : request
+          )
+        );
 
         setIsModalOpen(false);
         setSelectedItem(null);
 
-        // Refresh request list after approval
-        try {
-          const response = await axios.get(
-            "http://localhost:8000/api/owner/request-donasi",
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            }
-          );
-          setRequests(response.data);
-        } catch (refreshError) {
-          console.error("Error refreshing requests:", refreshError);
-        }
+        // Refresh items list
+        const itemsRes = await axios.get(
+          "http://localhost:8000/api/owner/barang-titipan-donasi",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        const formattedItems = itemsRes.data.map((item) => ({
+          id: String(item.KODE_PRODUK),
+          name: item.NAMA || "Barang tanpa nama",
+          condition: item.KONDISI || "Tidak diketahui",
+          warrantyDate: item.TANGGAL_GARANSI || "-",
+          status: item.STATUS,
+          kode: String(item.KODE_PRODUK),
+        }));
+
+        setItems(formattedItems);
       } catch (error) {
         console.error("Error confirming donation:", error);
         alert("Gagal menyetujui donasi. Silakan coba lagi.");
@@ -161,7 +199,6 @@ const DaftarRequestDonasi = () => {
     }
   };
 
-  // Filter the items based on search term
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -178,7 +215,6 @@ const DaftarRequestDonasi = () => {
     <div className="p-6">
       <h1 className="text-4xl font-bold mb-8">Daftar Request Donasi</h1>
 
-      {/* Filter Status */}
       <div className="flex mb-6">
         <select
           value={filterStatus}
@@ -192,7 +228,6 @@ const DaftarRequestDonasi = () => {
         </select>
       </div>
 
-      {/* Table */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -274,7 +309,6 @@ const DaftarRequestDonasi = () => {
         </div>
       )}
 
-      {/* Modal for selecting items */}
       {isModalOpen && (
         <div
           className="fixed inset-0 bg-gray-900/50 flex items-center justify-center z-50"
@@ -288,7 +322,6 @@ const DaftarRequestDonasi = () => {
           <div className="bg-white p-6 rounded-lg w-11/12 md:w-3/4 max-h-screen overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4">Pilih Barang</h2>
 
-            {/* Search Bar */}
             <div className="mb-4">
               <input
                 type="text"
@@ -313,6 +346,9 @@ const DaftarRequestDonasi = () => {
                   <thead className="sticky top-0">
                     <tr>
                       <th className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider">
+                        Kode Barang
+                      </th>
+                      <th className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider">
                         Nama
                       </th>
                       <th className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider">
@@ -336,6 +372,9 @@ const DaftarRequestDonasi = () => {
                         onClick={() => handleSelectItem(item)}
                       >
                         <td className="px-6 py-4 whitespace-nowrap font-medium">
+                          {item.kode}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap font-medium">
                           {item.name}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -347,7 +386,7 @@ const DaftarRequestDonasi = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span
                             className={`px-3 py-1 rounded-full text-sm font-medium ${
-                              item.status === "didonasikan"
+                              item.status === "telah didonasikan"
                                 ? "bg-blue-100 text-blue-700"
                                 : "bg-orange-100 text-orange-700"
                             }`}
@@ -362,11 +401,11 @@ const DaftarRequestDonasi = () => {
               </div>
             )}
 
-            {/* Selected item summary */}
             {selectedItem && (
               <div className="mt-4 p-3 bg-blue-50 rounded-md border border-blue-200">
                 <p className="font-medium">
-                  Barang terpilih: {selectedItem.name}
+                  Barang terpilih: {selectedItem.name} (Kode:{" "}
+                  {selectedItem.kode})
                 </p>
               </div>
             )}

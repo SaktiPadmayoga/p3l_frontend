@@ -11,7 +11,8 @@ function ForgotPass({ onSwitchToReset }) {
         setError('');
 
         try {
-            const response = await fetch('api/auth/forgot-password', {
+            const response = await fetch('api/auth/forgot-password-gabungan', {
+
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),

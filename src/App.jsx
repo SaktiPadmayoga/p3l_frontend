@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import Dashboard from "./layouts/Administrator/Dashboard";
 import Login from "./auth/login/login";
+import ForgotPass from "./auth/login/forgotPass";
+import ResetPass from "./auth/login/resetPass";
 import Register from "./auth/register/register";
 import RegisterTypeSelection from "./auth/register/RegisterTypeSelection";
 import RegisterOrganisasi from "./auth/register/RegisterOrganisasi";
@@ -89,6 +91,8 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/forgotPass" element={<ForgotPass />} />
+        <Route path="/reset-password" element={<ResetPass />} />
         <Route path="/register-selection" element={<RegisterTypeSelection />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register-organisasi" element={<RegisterOrganisasi />} />

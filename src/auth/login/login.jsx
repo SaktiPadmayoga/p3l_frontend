@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthService from "../../services/authService"; // Adjust the import path as necessary
+import { useNavigate, Link } from "react-router-dom";
+import AuthService from "../../services/authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (AuthService.isAuthenticated()) {
       const userType = AuthService.getUserType();
       if (userType === "pegawai") {
         navigate("/admin/dashboard");
       } else if (userType === "pembeli") {
+        navigate("/");
+      } else if (userType === "organisasi") {
         navigate("/");
       }
     }
@@ -29,13 +29,13 @@ const Login = () => {
 
     try {
       const response = await AuthService.login(email, password);
-
-      // Dispatch a custom event to notify other components about authentication
       window.dispatchEvent(new Event("authChange"));
 
       if (response.user_type === "pegawai") {
         navigate("/admin/dashboard");
       } else if (response.user_type === "pembeli") {
+        navigate("/");
+      } else if (response.user_type === "organisasi") {
         navigate("/");
       }
     } catch (err) {
@@ -87,6 +87,11 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <div className="mt-2">
+              <h2 style={{ color: 'blue' }}>
+                <Link to="/forgotPass">Forgot Password</Link>
+              </h2>
+            </div>
           </div>
 
           <button

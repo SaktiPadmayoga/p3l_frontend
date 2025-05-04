@@ -18,6 +18,8 @@ const Login = () => {
         navigate("/");
       } else if (userType === "organisasi") {
         navigate("/");
+      } else if (userType === "penitip") {
+        navigate("/");
       }
     }
   }, [navigate]);
@@ -36,6 +38,8 @@ const Login = () => {
       } else if (response.user_type === "pembeli") {
         navigate("/");
       } else if (response.user_type === "organisasi") {
+        navigate("/");
+      } else if (response.user_type === "penitip") {
         navigate("/");
       }
     } catch (err) {

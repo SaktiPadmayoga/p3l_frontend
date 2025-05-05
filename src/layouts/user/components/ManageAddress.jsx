@@ -128,117 +128,121 @@ const AddressManagement = () => {
       </form>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="absolute inset-0 bg-black/50 pointer-events-none"></div>
-          <div className="relative bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-700">{editingId ? "Edit Alamat" : "Tambah Alamat"}</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="JALAN" className="block mb-1 font-semibold text-gray-700">
-                    Jalan
-                  </label>
-                  <input
-                    id="JALAN"
-                    type="text"
-                    name="JALAN"
-                    placeholder="Jalan"
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.JALAN}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="KECAMATAN" className="block mb-1 font-semibold text-gray-700">
-                    Kecamatan
-                  </label>
-                  <input
-                    id="KECAMATAN"
-                    type="text"
-                    name="KECAMATAN"
-                    placeholder="Kecamatan"
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.KECAMATAN}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="KELURAHAN" className="block mb-1 font-semibold text-gray-700">
-                    Kelurahan
-                  </label>
-                  <input
-                    id="KELURAHAN"
-                    type="text"
-                    name="KELURAHAN"
-                    placeholder="Kelurahan"
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.KELURAHAN}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="KOTA" className="block mb-1 font-semibold text-gray-700">
-                    Kota
-                  </label>
-                  <input
-                    id="KOTA"
-                    type="text"
-                    name="KOTA"
-                    placeholder="Kota"
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.KOTA}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor="KODE_POS" className="block mb-1 font-semibold text-gray-700">
-                    Kode Pos
-                  </label>
-                  <input
-                    id="KODE_POS"
-                    type="text"
-                    name="KODE_POS"
-                    placeholder="Kode Pos"
-                    className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={formData.KODE_POS}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <label className="flex items-center gap-2 mt-2 md:col-span-2">
-                  <input
-                    type="checkbox"
-                    name="ALAMAT_UTAMA"
-                    checked={formData.ALAMAT_UTAMA}
-                    onChange={handleChange}
-                    className="w-5 h-5 text-blue-600"
-                  />
-                  <span className="text-gray-700">Jadikan sebagai Alamat Utama</span>
-                </label>
-              </div>
-              <div className="flex justify-end mt-4 gap-2">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded -lg hover:bg-blue-700 transition"
-                >
-                  {editingId ? "Update Alamat" : "Tambah Alamat"}
-                </button>
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
-                >
-                  Batal
-                </button>
-              </div>
-            </form>
+  <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="absolute inset-0 bg-black/50 pointer-events-none"></div>
+    <div className="relative bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <h3 className="text-xl font-semibold mb-4 text-gray-700">
+        {editingId ? "Edit Alamat" : "Tambah Alamat"}
+      </h3>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label htmlFor="JALAN" className="block mb-1 font-semibold text-gray-700">
+              Jalan
+            </label>
+            <input
+              id="JALAN"
+              type="text"
+              name="JALAN"
+              placeholder="Cth : Jl. Babarsari No. 1"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.JALAN}
+              onChange={handleChange}
+              required
+            />
           </div>
+          <div>
+            <label htmlFor="KECAMATAN" className="block mb-1 font-semibold text-gray-700">
+              Kecamatan
+            </label>
+            <input
+              id="KECAMATAN"
+              type="text"
+              name="KECAMATAN"
+              placeholder="Cth : Depok"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KECAMATAN}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KELURAHAN" className="block mb-1 font-semibold text-gray-700">
+              Kelurahan
+            </label>
+            <input
+              id="KELURAHAN"
+              type="text"
+              name="KELURAHAN"
+              placeholder="Cth : Caturtunggal"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KELURAHAN}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KOTA" className="block mb-1 font-semibold text-gray-700">
+              Kota
+            </label>
+            <input
+              id="KOTA"
+              type="text"
+              name="KOTA"
+              placeholder="Cth : Sleman"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KOTA}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KODE_POS" className="block mb-1 font-semibold text-gray-700">
+              Kode Pos
+            </label>
+            <input
+              id="KODE_POS"
+              type="text"
+              name="KODE_POS"
+              placeholder="Cth : 55281"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KODE_POS}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <label className="flex items-center gap-2 mt-2 md:col-span-2">
+            <input
+              type="checkbox"
+              name="ALAMAT_UTAMA"
+              checked={formData.ALAMAT_UTAMA}
+              onChange={handleChange}
+              className="w-5 h-5 text-blue-600"
+            />
+            <span className="text-gray-700">Jadikan sebagai Alamat Utama</span>
+          </label>
         </div>
-      )}
+        <div className="flex justify-end mt-4 gap-2">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            {editingId ? "Update Alamat" : "Tambah Alamat"}
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+          >
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
 
       <h3 className="text-xl font-semibold mb-4 text-gray-700 mt-8">Daftar Alamat</h3>
       {loading ? (

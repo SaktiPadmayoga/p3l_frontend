@@ -1,9 +1,16 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
-
-// https://vite.dev/config/
-import 'tailwind-scrollbar-hide'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc'; // tetap pakai SWC
+import 'tailwind-scrollbar-hide';
 
 export default defineConfig({
-  plugins: [react()]
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

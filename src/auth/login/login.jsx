@@ -24,6 +24,7 @@ const Login = () => {
     }
   }, [navigate]);
 
+  // login.jsx
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -38,7 +39,7 @@ const Login = () => {
       } else if (response.user_type === "pembeli") {
         navigate("/");
       } else if (response.user_type === "organisasi") {
-        navigate("/");
+        navigate("/admin/manage-request-donasi"); // Redirect organization to ManageRequestDonasi
       } else if (response.user_type === "penitip") {
         navigate("/");
       }
@@ -92,7 +93,7 @@ const Login = () => {
               required
             />
             <div className="mt-2">
-              <h2 style={{ color: 'blue' }}>
+              <h2 style={{ color: "blue" }}>
                 <Link to="/forgotPass">Forgot Password</Link>
               </h2>
             </div>

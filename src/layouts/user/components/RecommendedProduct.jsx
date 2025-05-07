@@ -1,107 +1,186 @@
-import { useState, useEffect } from 'react';
-import { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import AuthService from "../../../services/authService";
 
+const API_URL = "http://localhost:8000/api";
+
+// Dummy images from catalogue
+const dummyImages = [
+  "/src/assets/hero-bg.jpg",
+  "/src/assets/tenda.webp",
+  "/src/assets/tenda1.webp",
+  "/src/assets/tenda2.webp",
+  "/src/assets/tenda3.webp",
+];
 
 export default function RecommendedProducts() {
+  const sliderRef = useRef(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-    const sliderRef = useRef(null);
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const productsResponse = await axios.get(`${API_URL}/products`);
+        const productsWithImages = productsResponse.data.data.map(
+          (product, index) => ({
+            ...product,
+            image: dummyImages[index % dummyImages.length], // Cycle through dummy images
+          })
+        );
+        setProducts(productsWithImages);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(
+          "Failed to load recommended products. Please try again later."
+        );
+        setLoading(false);
+      }
+    };
 
-const scrollLeft = () => {
-  sliderRef.current.scrollBy({ left: -500, behavior: 'smooth' });
-};
+    fetchProducts();
+  }, []);
 
-const scrollRight = () => {
-  sliderRef.current.scrollBy({ left: 500, behavior: 'smooth' });
-};
-    const recommendedProducts = [
-        {
-          id: 7,
-          name: 'TWS Bujuu',
-          category: 'Music',
-          price: 29.90,
-          rating: 4.1,
-          reviews: 88,
-          image: '/src/assets/tenda.webp',
-        },
-        {
-          id: 8,
-          name: 'Headsound Beptic',
-          category: 'Music',
-          price: 12.00,
-          rating: 4.6,
-          reviews: 90,
-          image: '/src/assets/tenda1.webp',
-        },
-        {
-          id: 9,
-          name: 'Acloku Cleaner',
-          category: 'Other',
-          price: 29.90,
-          rating: 4.8,
-          reviews: 110,
-          image: '/src/assets/tenda.webp',
-        },
-        {
-            id: 10,
-            name: 'TWS Bujuu',
-            category: 'Music',
-            price: 29.90,
-            rating: 4.1,
-            reviews: 88,
-            image: '/src/assets/tenda.webp',
-          },
-          {
-            id: 11,
-            name: 'Headsound Beptic',
-            category: 'Music',
-            price: 12.00,
-            rating: 4.6,
-            reviews: 90,
-            image: '/src/assets/tenda1.webp',
-          },
-      ];
+  const scrollLeft = () => {
+    sliderRef.current.scrollBy({ left: -500, behavior: "smooth" });
+  };
 
-      const ProductCard = ({ product }) => (
-        <div className="bg-white rounded-xl hover:shadow-xl overflow-hidden cursor-pointer hover:-translate-y-1 p-4 transition duration-300 ">
-          <div className="flex justify-center">
-            <img src={product.image} alt={product.name} className="h-64 w-full object-cover rounded-lg" />
-          </div>
-          <div className='pt-4'>
-            <h3 className="text-lg font-semibold">{product.name}</h3>
-            <p className="text-sm text-gray-500">{product.category}</p>
-            <div className="flex justify-between items-center mt-2">
-                <span className="font-bold text-2xl text-stone-800">${product.price.toFixed(2)}</span>
-                <div className="flex space-x-2">
-                <button className="bg-gray-100  text-stone-800 px-2 py-1 rounded">Add to Cart</button>            
-                </div>
-            </div>
-          </div>
-          
+  const scrollRight = () => {
+    sliderRef.current.scrollBy({ left: 500, behavior: "smooth" });
+  };
+
+  // Handle product click to navigate to detail page
+  const handleProductClick = (productId) => {
+    navigate(`/detail-product/${productId}`);
+  };
+
+  // Handle Add to Cart click
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent navigating to detail page
+    if (!AuthService.isAuthenticated()) {
+      navigate("/login", {
+        state: { message: "Login terlebih dahulu sebagai pembeli" },
+      });
+    }
+    // For pembeli, the button is disabled, so no action is needed here
+  };
+
+  const ProductCard = ({ product }) => {
+    const userType = AuthService.getUserType() || "";
+    const isAuthenticated = AuthService.isAuthenticated();
+    const showAddToCart = userType !== "penitip"; // Hide for penitip
+    const isPembeli = userType === "pembeli";
+
+    return (
+      <div
+        className="bg-white rounded-xl hover:shadow-xl overflow-hidden cursor-pointer hover:-translate-y-1 p-4 transition duration-300"
+        onClick={() => handleProductClick(product.id)}
+      >
+        <div className="flex justify-center">
+          <img
+            src={product.image}
+            alt={product.name || "Product"}
+            className="h-64 w-full object-cover rounded-lg"
+          />
         </div>
-      );
+        <div className="pt-4">
+          <h3 className="text-lg font-semibold">
+            {product.name || "Unknown Product"}
+          </h3>
+          <p className="text-sm text-gray-500">
+            {product.subcategory || "Unknown"}
+          </p>
+          <div className="flex justify-between items-center mt-2">
+            <span className="font-bold text-2xl text-stone-800">
+              ${product.price ? product.price.toFixed(2) : "N/A"}
+            </span>
+            {showAddToCart && (
+              <div className="flex space-x-2">
+                <button
+                  className={`px-2 py-1 rounded text-sm ${
+                    isPembeli
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-stone-600 text-white hover:bg-stone-700"
+                  }`}
+                  onClick={handleAddToCart}
+                  disabled={isPembeli}
+                  title={
+                    isPembeli ? "Cart functionality coming soon" : "Add to Cart"
+                  }
+                >
+                  Add to Cart
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="mb-5 m-16">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-4xl font-medium">Explore our recomendations</h2>
-              <div className="flex space-x-2">
-                <button onClick={scrollLeft} className=""><ChevronLeft size={36} /></button>
-                <button onClick={scrollRight} className=""><ChevronRight size={36} /></button>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-4xl font-medium">Explore our recommendations</h2>
+        <div className="flex space-x-2">
+          <button onClick={scrollLeft} className="">
+            <ChevronLeft size={36} />
+          </button>
+          <button onClick={scrollRight} className="">
+            <ChevronRight size={36} />
+          </button>
+        </div>
+      </div>
+      {loading ? (
+        <div className="flex justify-center py-8">
+          <svg
+            className="animate-spin h-8 w-8 text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+      ) : error ? (
+        <div className="text-red-500 py-4">{error}</div>
+      ) : (
+        <div
+          ref={sliderRef}
+          className="overflow-x-auto scrollbar-hide scroll-smooth"
+        >
+          <div className="flex space-x-4 w-max">
+            {products.slice(0, 10).map((product) => (
+              <div
+                key={product.id}
+                className="flex-shrink-0 w-64 h-auto rounded-lg mb-10"
+              >
+                <ProductCard product={product} />
               </div>
-            </div>
-            <div ref={sliderRef}
-    className=" overflow-x-auto scrollbar-hide scroll-smooth">
-                <div className="flex space-x-4 w-max">
-                    {recommendedProducts.map(product => (
-                    <div
-                        
-                        className="flex-shrink-0 w-lg h-xl rounded-lg mb-10"
-                    >
-                        <ProductCard key={product.id} product={product} />
-                    </div>
-                    ))}
-                </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -61,7 +61,6 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // Admin route protection
-// App.jsx
 const AdminRoute = ({ children }) => {
   const isAuthenticated = AuthService.isAuthenticated();
   const userType = AuthService.getUserType();
@@ -151,7 +150,7 @@ function App() {
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalogue" element={<Catalogue />} />
-          <Route path="/detail-product" element={<DetailProduct />} />
+          <Route path="/detail-product/:id" element={<DetailProduct />} />
           <Route
             path="/profile"
             element={

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import AuthService from "../../services/authService";
 
 const Login = () => {
@@ -8,6 +8,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (AuthService.isAuthenticated()) {
@@ -22,9 +23,16 @@ const Login = () => {
         navigate("/");
       }
     }
-  }, [navigate]);
 
-  // login.jsx
+    // Display message from state if present
+    if (location.state?.message) {
+      setError(location.state.message);
+      // Clear error message after 5 seconds
+      const timer = setTimeout(() => setError(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [navigate, location]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -39,7 +47,7 @@ const Login = () => {
       } else if (response.user_type === "pembeli") {
         navigate("/");
       } else if (response.user_type === "organisasi") {
-        navigate("/admin/manage-request-donasi"); // Redirect organization to ManageRequestDonasi
+        navigate("/admin/manage-request-donasi");
       } else if (response.user_type === "penitip") {
         navigate("/");
       }
@@ -64,7 +72,9 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded mb-4">{error}</div>
+          <div className="bg-red-50 text-red-600 p-4 rounded mb-4 font-medium text-center">
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleLogin}>
@@ -92,10 +102,13 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <div className="mt-2">
-              <h2 style={{ color: "blue" }}>
-                <Link to="/forgotPass">Forgot Password</Link>
-              </h2>
+            <div className="mt-2 text-right">
+              <Link
+                to="/forgotPass"
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Forgot Password?
+              </Link>
             </div>
           </div>
 

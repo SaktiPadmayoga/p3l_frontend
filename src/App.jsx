@@ -61,12 +61,26 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // Admin route protection
+// App.jsx
 const AdminRoute = ({ children }) => {
   const isAuthenticated = AuthService.isAuthenticated();
   const userType = AuthService.getUserType();
 
-  if (!isAuthenticated || userType !== "pegawai") {
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  // Allow pegawai for all admin routes, and organisasi only for manage-request-donasi
+  if (userType !== "pegawai" && userType !== "organisasi") {
+    return <Navigate to="/login" />;
+  }
+
+  // Restrict organisasi to only manage-request-donasi
+  if (
+    userType === "organisasi" &&
+    window.location.pathname !== "/admin/manage-request-donasi"
+  ) {
+    return <Navigate to="/admin/manage-request-donasi" />;
   }
 
   return children;

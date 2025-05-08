@@ -17,7 +17,7 @@ import HomePage from "./layouts/user/pages/homepage";
 import Catalogue from "./layouts/user/pages/Catalogue";
 import UserNavbar from "./layouts/user/components/UserNavbar";
 import DetailProduct from "./layouts/user/pages/DetailProduct";
-import Profile from "./layouts/user/pages/Profile";
+import Profile from "./layouts/user/pages/profile";
 import ManagePegawai from "./layouts/Administrator/pages/ManagePegawai";
 import ManagePenitip from "./layouts/Administrator/pages/ManagePenitip";
 import ManageJabatan from "./layouts/Administrator/pages/ManageJabatan";

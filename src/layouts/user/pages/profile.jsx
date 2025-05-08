@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { User, Home, ShoppingBag, Heart, Clock, Settings, Bell } from 'lucide-react';
 import AddressManagement from '../components/ManageAddress';
+import HistoryManagement from '../components/ManageHistory';
 import axios from 'axios';
+import { div } from 'framer-motion/client';
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -28,9 +30,9 @@ export default function Profile() {
           />
           <SidebarItem 
             icon={<ShoppingBag size={24} />} 
-            text="Transactions" 
-            active={activeTab === 'transactions'} 
-            onClick={() => setActiveTab('transactions')}
+            text="History" 
+            active={activeTab === 'history'} 
+            onClick={() => setActiveTab('history')}
           />
           <SidebarItem 
             icon={<Bell size={24} />} 
@@ -45,7 +47,7 @@ export default function Profile() {
       <div className="flex-1 p-8 overflow-auto">
         {activeTab === 'profile' && <ProfilePage />}
         {activeTab === 'address' && <AddressPage />}
-        {activeTab === 'transactions' && <TransactionsPage />}
+        {activeTab === 'history' && <HistoryPage />}
         {activeTab === 'notifications' && <PlaceholderPage title="Notifications" />}
       </div>
     </div>
@@ -111,6 +113,9 @@ function ProfilePage() {
         <ProfileItem label="Tipe Pengguna" value={user_type} />
         <ProfileItem label="ID Pengguna" value={user.id} />
         <ProfileItem label="Poin Loyalitas" value={user.poin ?? '-'} />
+        {user.role.includes('penitip') && (
+          <ProfileItem label="Saldo" value={user.saldo ?? 'Rp 0'} />
+        )}
         <ProfileItem label="Role" value={user.role.join(', ')} />
         {user_type === 'organisasi' && (
           <>
@@ -120,9 +125,10 @@ function ProfilePage() {
           </>
         )}
 
-        {user_type !== 'organisasi' && (
+        {/* {user_type !== 'organisasi' && (
           <ProfileItem label="Poin Loyalitas" value={user.poin ?? '-'} />
-        )}
+        )} */}
+        
       </div>
 
       <div className="mt-10 text-right">
@@ -151,49 +157,10 @@ function AddressPage() {
   );
 }
 
-function TransactionsPage() {
-  const transactions = [
-    { id: 1, date: '2025-04-15', description: 'Online Purchase', amount: '$129.99', status: 'Completed', paymentMethod: 'Credit Card' },
-    { id: 2, date: '2025-04-10', description: 'Subscription Renewal', amount: '$9.99', status: 'Completed', paymentMethod: 'PayPal' },
-    { id: 3, date: '2025-04-05', description: 'Mobile Phone Case', amount: '$24.99', status: 'Processing', paymentMethod: 'Credit Card' },
-    { id: 4, date: '2025-03-30', description: 'Annual Membership', amount: '$99.00', status: 'Completed', paymentMethod: 'Bank Transfer' },
-    { id: 5, date: '2025-03-22', description: 'Wireless Headphones', amount: '$149.99', status: 'Completed', paymentMethod: 'Credit Card' }
-  ];
-
-  return (
+function HistoryPage(){
+  return(
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Transaction History</h2>
-        <div className="flex space-x-2">
-          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">Filter</button>
-          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">Export</button>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-lg shadow-sm overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 text-left">
-            <tr>
-              <th className="p-4">Tanggal</th>
-              <th className="p-4">Deskripsi</th>
-              <th className="p-4">Jumlah</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Metode</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map(tx => (
-              <tr key={tx.id} className="border-t hover:bg-gray-50">
-                <td className="p-4">{tx.date}</td>
-                <td className="p-4">{tx.description}</td>
-                <td className="p-4">{tx.amount}</td>
-                <td className="p-4">{tx.status}</td>
-                <td className="p-4">{tx.paymentMethod}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <HistoryManagement />
     </div>
   );
 }

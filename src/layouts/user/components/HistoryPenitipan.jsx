@@ -1,0 +1,392 @@
+import React, { useState } from "react";
+import DetailPenitipan from "./DetailPenitipan";
+
+const HistoryPenitipan = () => {
+  const [transactions, setTransactions] = useState([
+    {
+      id: 101,
+      date: "2025-04-20",
+      status: "Selesai",
+      items: [
+        {
+          shopName: "JFR OFFICIAL Shop",
+          products: [
+            {
+              id: 1001,
+              name: "JFR Premium Sunglasses",
+              variant: "MATTE BLACK",
+              quantity: 3,
+              price: "Rp120.000",
+              originalPrice: "Rp200.000",
+              image: "/api/placeholder/60/60",
+              penitip: "Andi Pratama",
+            },
+          ],
+        },
+      ],
+      totalAmount: "Rp360.000",
+      paymentMethod: "Bank Transfer",
+    },
+    {
+      id: 102,
+      date: "2025-04-12",
+      status: "Dikirim",
+      items: [
+        {
+          shopName: "Fashion Outlet",
+          products: [
+            {
+              id: 1002,
+              name: "Designer Scarf",
+              variant: "RED",
+              quantity: 2,
+              price: "Rp75.000",
+              originalPrice: "Rp100.000",
+              image: "/api/placeholder/60/60",
+              penitip: "Maya Sari",
+            },
+          ],
+        },
+      ],
+      totalAmount: "Rp150.000",
+      paymentMethod: "Credit Card",
+    },
+    {
+      id: 103,
+      date: "2025-05-05",
+      status: "Sedang Dikemas",
+      items: [
+        {
+          shopName: "Electronics Megastore",
+          products: [
+            {
+              id: 1003,
+              name: "Wireless Charger",
+              variant: "WHITE",
+              quantity: 5,
+              price: "Rp50.000",
+              originalPrice: "Rp80.000",
+              image: "/api/placeholder/60/60",
+              penitip: "Rina Susanti",
+            },
+          ],
+        },
+      ],
+      totalAmount: "Rp250.000",
+      paymentMethod: "Credit Card",
+    },
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("Semua");
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [selectedTransactionId, setSelectedTransactionId] = useState(null);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    if (e) e.preventDefault();
+  };
+
+  const handleFilterChange = (status) => {
+    setFilterStatus(status);
+  };
+
+  const handleCardBodyClick = (transactionId) => {
+    console.log(
+      `Navigating to penitipan transaction details for ID: ${transactionId}`
+    );
+    setSelectedTransactionId(transactionId);
+  };
+
+  const handleBackToHistory = () => {
+    setSelectedTransactionId(null);
+  };
+
+  const openRatingModal = (product, shopName) => {
+    setSelectedProduct({ ...product, shopName });
+    setRating(0);
+    setIsRatingModalOpen(true);
+  };
+
+  const handleRatingChange = (rating) => {
+    setRating(rating);
+  };
+
+  const handleRatingSubmit = () => {
+    console.log("Submitted rating for product:", selectedProduct.id, rating);
+    setIsRatingModalOpen(false);
+    setSelectedProduct(null);
+    setRating(0);
+  };
+
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesSearch =
+      tx.items.some((item) =>
+        item.products.some(
+          (product) =>
+            product.penitip.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      ) ||
+      tx.date.includes(searchQuery) ||
+      tx.paymentMethod.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      filterStatus === "Semua" ? true : tx.status === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const statusFilters = [
+    "Semua",
+    "Belum Bayar",
+    "Sedang Dikemas",
+    "Dikirim",
+    "Selesai",
+    "Dibatalkan",
+    "Siap Diambil",
+  ];
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8 relative">
+      {selectedTransactionId ? (
+        <DetailPenitipan
+          transactionId={selectedTransactionId}
+          onBack={handleBackToHistory}
+        />
+      ) : (
+        <>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Riwayat Penitipan
+            </h2>
+          </div>
+
+          {/* Filter Card Bar */}
+          <div className="flex space-x-2 overflow-x-auto mb-4">
+            {statusFilters.map((status) => (
+              <button
+                key={status}
+                onClick={() => handleFilterChange(status)}
+                className={`text-sm font-medium px-4 py-2 rounded-lg border whitespace-nowrap transition ${
+                  filterStatus === status
+                    ? "bg-red-500 text-white border-red-500"
+                    : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Cari transaksi..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="space-y-6">
+            {filteredTransactions.length === 0 ? (
+              <p className="text-center text-gray-500">
+                Tidak ada transaksi yang ditemukan.
+              </p>
+            ) : (
+              filteredTransactions.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="bg-white rounded-lg shadow-sm border border-gray-200"
+                >
+                  {/* Card Header - Transaction Info */}
+                  <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gray-50">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-semibold text-gray-800">
+                        No. Nota: #{tx.id}
+                      </span>
+                    </div>
+                    <span
+                      className={`text-sm font-medium ${
+                        tx.status === "Selesai"
+                          ? "text-green-600"
+                          : tx.status === "Dibatalkan"
+                          ? "text-red-600"
+                          : "text-yellow-600"
+                      }`}
+                    >
+                      {tx.status}
+                    </span>
+                  </div>
+
+                  {/* Card Body with Penitip Groups */}
+                  <div
+                    className="p-4 cursor-pointer hover:bg-gray-50 transition"
+                    onClick={() => handleCardBodyClick(tx.id)}
+                  >
+                    {tx.items.map((item, shopIndex) =>
+                      item.products
+                        .reduce((acc, product, productIndex) => {
+                          const penitip = product.penitip;
+                          const existingGroup = acc.find(
+                            (group) => group.penitip === penitip
+                          );
+
+                          if (existingGroup) {
+                            existingGroup.products.push(product);
+                          } else {
+                            acc.push({
+                              penitip,
+                              products: [product],
+                            });
+                          }
+
+                          return acc;
+                        }, [])
+                        .map((group, groupIndex) => (
+                          <div key={groupIndex} className="mb-6 last:mb-0">
+                            {/* Penitip Header */}
+                            <div className="flex items-center space-x-2 mb-3 pb-2 border-b border-gray-100">
+                              <span className="text-sm font-semibold text-gray-700">
+                                {group.penitip}
+                              </span>
+                            </div>
+
+                            {/* Penitip Products */}
+                            <div className="space-y-4">
+                              {group.products.map((product, productIndex) => (
+                                <div
+                                  key={productIndex}
+                                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100 last:border-0"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <div className="flex items-start space-x-4">
+                                    <img
+                                      src={product.image}
+                                      alt={product.name}
+                                      className="w-16 h-16 object-cover rounded"
+                                    />
+                                    <div>
+                                      <p className="text-sm font-medium text-gray-800">
+                                        {product.name}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex flex-col items-end gap-2">
+                                    <div className="text-right">
+                                      <p className="text-sm text-gray-500">
+                                        Harga:
+                                      </p>
+                                      <span className="text-sm font-semibold text-gray-800">
+                                        {product.price}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        openRatingModal(
+                                          product,
+                                          product.penitip
+                                        );
+                                      }}
+                                      className="bg-blue-500 text-white px-3 py-1.5 text-sm rounded-lg hover:bg-blue-600 transition"
+                                    >
+                                      Beri Nilai
+                                    </button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </div>
+
+                  {/* Card Footer */}
+                  <div className="flex justify-end items-center p-4 border-t border-gray-200 bg-gray-50">
+                    <div className="text-right">
+                      <p className="text-sm text-gray-600">
+                        Total Pesanan:{" "}
+                        <span className="font-semibold text-gray-800">
+                          {tx.totalAmount}
+                        </span>
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Tanggal Transaksi: {tx.date}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Rating Modal */}
+          {isRatingModalOpen && selectedProduct && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="absolute inset-0 bg-black/50 pointer-events-none"></div>
+              <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+                <h3 className="text-xl font-semibold mb-4 text-gray-700">
+                  Beri Nilai Produk
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src={selectedProduct.image}
+                      alt={selectedProduct.name}
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-800">
+                        {selectedProduct.name}
+                      </p>
+                      <div className="flex space-x-1 mt-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            onClick={() => handleRatingChange(star)}
+                            className={`text-2xl ${
+                              rating >= star
+                                ? "text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          >
+                            ★
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-6 space-x-2">
+                  <button
+                    onClick={() => setIsRatingModalOpen(false)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={handleRatingSubmit}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                  >
+                    Kirim
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default HistoryPenitipan;

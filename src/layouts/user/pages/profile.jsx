@@ -88,13 +88,15 @@ export default function Profile() {
             onClick={() => setActiveTab("profile")}
           />
 
-          <SidebarItem
-            icon={<Home size={24} />}
-            text="Address"
-            active={activeTab === "address"}
-            onClick={() => setActiveTab("address")}
-
-          />
+          {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
+            <SidebarItem
+              icon={<Home size={24} />}
+              text="Address"
+              active={activeTab === "address"}
+              onClick={() => setActiveTab("address")}
+            />
+          )}
+          
           {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
             <SidebarItem
               icon={<ShoppingBag size={24} />}
@@ -226,8 +228,13 @@ function ProfilePage() {
         <ProfileItem label="Tipe Pengguna" value={user_type} />
         <ProfileItem label="ID Pengguna" value={user.id} />
 
-        <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
+        {user_type !== "organisasi" && (
+          <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
+        )}
         <ProfileItem label="Role" value={user.role.join(", ")} />
+        {user_type === "penitip" && (
+          <ProfileItem label="Saldo" value={user.saldo} />
+        )}
         {user_type === "organisasi" && (
 
           <>
@@ -237,9 +244,7 @@ function ProfilePage() {
           </>
         )}
 
-        {user_type !== "organisasi" && (
-          <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
-        )}
+        
 
       </div>
 

@@ -146,25 +146,27 @@ const HistoryDonasi = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        donasi.status === "Diterima"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
+                        donasi.nama_penerima === "Belum ditentukan"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-green-100 text-green-700"
                       }`}
                     >
-                      {donasi.status}
+                      {donasi.nama_penerima === "Belum ditentukan"
+                        ? "Belum Diterima"
+                        : "Diterima"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleConfirmDonation(donasi)}
                       className={`px-3 py-2 rounded-md text-white ${
-                        donasi.status === "Diterima"
+                        donasi.nama_penerima !== "Belum ditentukan"
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-blue-500 hover:bg-blue-600"
                       }`}
-                      disabled={donasi.status === "Diterima"}
+                      disabled={donasi.nama_penerima !== "Belum ditentukan"}
                     >
-                      {donasi.status === "Diterima"
+                      {donasi.nama_penerima !== "Belum ditentukan"
                         ? "Terkonfirmasi"
                         : "Konfirmasi Donasi"}
                     </button>

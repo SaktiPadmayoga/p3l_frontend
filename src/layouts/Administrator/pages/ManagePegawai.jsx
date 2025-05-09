@@ -13,6 +13,7 @@ const ManagePegawai = () => {
     phone: "",
     address: "",
     status: "active",
+    tgl_lahir: "",
     password: "",
     idJabatan: "",
   });
@@ -128,6 +129,7 @@ const ManagePegawai = () => {
         TELEPON: newEmployee.phone,
         ALAMAT: newEmployee.address,
         STATUS: newEmployee.status,
+        TGL_LAHIR: newEmployee.tgl_lahir,
         PASSWORD: newEmployee.password,
         ID_JABATAN: newEmployee.idJabatan,
       });
@@ -162,6 +164,7 @@ const ManagePegawai = () => {
         EMAIL: newEmployee.email,
         TELEPON: newEmployee.phone,
         ALAMAT: newEmployee.address,
+        TGL_LAHIR: newEmployee.tgl_lahir,
         STATUS: newEmployee.status,
         ID_JABATAN: newEmployee.idJabatan,
       };
@@ -210,6 +213,7 @@ const ManagePegawai = () => {
       phone: "",
       address: "",
       status: "active",
+      tgl_lahir: "",
       password: "",
       idJabatan: "",
     });
@@ -217,16 +221,26 @@ const ManagePegawai = () => {
     setIsModalOpen(false);
   };
 
-  // Function to handle opening the modal
-  const openModal = () => {
-    console.log("Opening modal - current state:", isModalOpen);
+  // Function to handle opening the modal for editing
+  const openEditModal = (employee) => {
+    setNewEmployee({
+      name: employee.NAMA,
+      email: employee.EMAIL,
+      phone: employee.TELEPON,
+      address: employee.ALAMAT,
+      status: employee.STATUS,
+      tgl_lahir: employee.TGL_LAHIR ? employee.TGL_LAHIR.substring(0, 10) : "", // Format tanggal untuk input type="date"
+      password: "",
+      idJabatan: employee.ID_JABATAN,
+    });
+    setEditingEmployeeId(employee.ID_PEGAWAI);
     setIsModalOpen(true);
-    console.log("Modal state set to true");
+  };
 
-    // Force a re-render if necessary
-    setTimeout(() => {
-      console.log("Checking modal state after timeout:", isModalOpen);
-    }, 100);
+  // Function to handle opening the modal for adding
+  const openAddModal = () => {
+    resetForm(); // Ensure form is reset when opening add modal
+    setIsModalOpen(true);
   };
 
   return (
@@ -261,8 +275,8 @@ const ManagePegawai = () => {
         {/* Using div instead of button for better click handling */}
         <div
           role="button"
-          onClick={openModal}
-          onKeyDown={(e) => e.key === "Enter" && openModal()}
+          onClick={openAddModal}
+          onKeyDown={(e) => e.key === "Enter" && openAddModal()}
           tabIndex={0}
           className="bg-stone-600 text-white px-4 py-3 text-lg rounded-md hover:bg-stone-700 cursor-pointer flex items-center justify-center"
         >
@@ -288,6 +302,7 @@ const ManagePegawai = () => {
                   "Alamat",
                   "Email",
                   "Status",
+                  "Tanggal Lahir",
                   "Jabatan",
                   "Aksi",
                 ].map((head) => (
@@ -325,24 +340,15 @@ const ManagePegawai = () => {
                       {employee.STATUS}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      {employee.TGL_LAHIR ? employee.TGL_LAHIR.substring(0, 10) : "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-gray-900">
                       {employee.JABATAN}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div className="flex space-x-4">
                         <button
-                          onClick={() => {
-                            setNewEmployee({
-                              name: employee.NAMA,
-                              email: employee.EMAIL,
-                              phone: employee.TELEPON,
-                              address: employee.ALAMAT,
-                              status: employee.STATUS,
-                              password: "",
-                              idJabatan: employee.ID_JABATAN,
-                            });
-                            setEditingEmployeeId(employee.ID_PEGAWAI);
-                            setIsModalOpen(true);
-                          }}
+                          onClick={() => openEditModal(employee)}
                           className="text-blue-500 hover:text-blue-600"
                         >
                           Edit
@@ -362,7 +368,7 @@ const ManagePegawai = () => {
               ) : (
                 <tr>
                   <td
-                    colSpan="8"
+                    colSpan="9"
                     className="px-6 py-4 text-center text-gray-500"
                   >
                     No employees found
@@ -453,6 +459,18 @@ const ManagePegawai = () => {
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-1">
+                  Tanggal Lahir
+                </label>
+                <input
+                type="date"
+                  name="tgl_lahir"
+                  value={newEmployee.tgl_lahir}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
               </div>
               <div className="mb-4">
                 <label className="block text-sm font-medium mb-1">

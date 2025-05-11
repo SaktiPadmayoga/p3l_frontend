@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import bg from "../../assets/BgFix.png";
 import AuthService from "../../services/authService"; // Import AuthService for redirection
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -92,7 +93,6 @@ const Register = () => {
                   required
                 />
               </div>
-
               {/* Email Address */}
               <div>
                 <label
@@ -112,7 +112,6 @@ const Register = () => {
                   required
                 />
               </div>
-
               {/* Password */}
               <div>
                 <label
@@ -132,7 +131,6 @@ const Register = () => {
                   required
                 />
               </div>
-
               {/* No HP */}
               <div>
                 <label
@@ -152,7 +150,6 @@ const Register = () => {
                   required
                 />
               </div>
-
               {/* Register Button */}
               <div className="flex items-center text-center">
                 <button
@@ -162,7 +159,6 @@ const Register = () => {
                   Daftar
                 </button>
               </div>
-
               {/* Register Link */}
               <p className="text-sm font-light text-gray-500 mt-4">
                 Sudah memiliki akun?{" "}
@@ -172,6 +168,16 @@ const Register = () => {
                 >
                   Masuk.
                 </a>
+              </p>
+
+              {/* Back to selection */}
+              <p className="text-sm font-light text-gray-500">
+                <Link
+                  to="/register-selection"
+                  className="font-medium text-stone-600 hover:underline"
+                >
+                  Kembali ke pemilihan jenis akun
+                </Link>
               </p>
             </form>
           </div>

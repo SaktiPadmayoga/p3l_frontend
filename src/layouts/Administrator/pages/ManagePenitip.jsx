@@ -20,6 +20,7 @@ const ManagePenitip = () => {
   const [editingPenitipId, setEditingPenitipId] = useState(null);
   const [loadError, setLoadError] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
 
   // Function to fetch penitips data
   const fetchPenitips = async () => {
@@ -123,23 +124,26 @@ const ManagePenitip = () => {
     console.log("handleAddPenitip called");
 
     // Validation
-    if (!newPenitip.name) {
-      alert("Name is required");
+    if (
+      !newPenitip.name ||
+      !newPenitip.email ||
+      !newPenitip.phone ||
+      !newPenitip.address ||
+      !newPenitip.noKtp ||
+      !newPenitip.password
+    ) {
+      alert("All required fields must be filled");
       return;
     }
 
     // Create FormData object for file upload
     const formData = new FormData();
     formData.append("NAMA", newPenitip.name);
-    formData.append("ALAMAT", newPenitip.address || "");
-    formData.append("TELEPON", newPenitip.phone || "");
-    formData.append("NO_KTP", newPenitip.noKtp || "");
-    formData.append("EMAIL", newPenitip.email || "");
-
-    // Only append password if it exists
-    if (newPenitip.password) {
-      formData.append("PASSWORD", newPenitip.password);
-    }
+    formData.append("ALAMAT", newPenitip.address);
+    formData.append("TELEPON", newPenitip.phone);
+    formData.append("NO_KTP", newPenitip.noKtp);
+    formData.append("EMAIL", newPenitip.email);
+    formData.append("PASSWORD", newPenitip.password);
 
     // Only append file if it exists
     if (newPenitip.fotoKtp) {
@@ -214,11 +218,22 @@ const ManagePenitip = () => {
     // Prevent default form submission if called from a form
     if (e) e.preventDefault();
 
+    // Show confirmation prompt
+    if (!window.confirm("Yakin ingin menyimpan perubahan pada penitip ini?")) {
+      return;
+    }
+
     console.log("handleUpdatePenitip called for ID:", editingPenitipId);
 
     // Validation
-    if (!newPenitip.name) {
-      alert("Name is required");
+    if (
+      !newPenitip.name ||
+      !newPenitip.email ||
+      !newPenitip.phone ||
+      !newPenitip.address ||
+      !newPenitip.noKtp
+    ) {
+      alert("All required fields must be filled");
       return;
     }
 
@@ -226,15 +241,10 @@ const ManagePenitip = () => {
     const formData = new FormData();
     formData.append("_method", "PUT"); // This is important for Laravel to recognize it as a PUT request
     formData.append("NAMA", newPenitip.name);
-    formData.append("ALAMAT", newPenitip.address || "");
-    formData.append("TELEPON", newPenitip.phone || "");
-    formData.append("NO_KTP", newPenitip.noKtp || "");
-    formData.append("EMAIL", newPenitip.email || "");
-
-    // Only append password if it exists and is not empty
-    if (newPenitip.password) {
-      formData.append("PASSWORD", newPenitip.password);
-    }
+    formData.append("ALAMAT", newPenitip.address);
+    formData.append("TELEPON", newPenitip.phone);
+    formData.append("NO_KTP", newPenitip.noKtp);
+    formData.append("EMAIL", newPenitip.email);
 
     // Only append file if it exists
     if (newPenitip.fotoKtp) {
@@ -332,6 +342,7 @@ const ManagePenitip = () => {
     setPreviewImage(null);
     setEditingPenitipId(null);
     setIsModalOpen(false);
+    setShowPassword(false); // Reset password visibility
   };
 
   // Clean up preview URL when component unmounts or when a new file is selected
@@ -443,7 +454,7 @@ const ManagePenitip = () => {
                               phone: penitip.TELEPON,
                               address: penitip.ALAMAT,
                               noKtp: penitip.NO_KTP,
-                              password: "", // Do not pre-fill password
+                              password: "", // Reset password
                               fotoKtp: null, // Reset file input
                             });
                             setEditingPenitipId(penitip.ID_PENITIP);
@@ -510,7 +521,7 @@ const ManagePenitip = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    Email
+                    Email <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
@@ -518,11 +529,12 @@ const ManagePenitip = () => {
                     value={newPenitip.email}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    No. Telepon
+                    No. Telepon <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -530,11 +542,12 @@ const ManagePenitip = () => {
                     value={newPenitip.phone}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
-                    No. KTP
+                    No. KTP <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -542,11 +555,12 @@ const ManagePenitip = () => {
                     value={newPenitip.noKtp}
                     onChange={handleInputChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
-                    Alamat
+                    Alamat <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     name="address"
@@ -554,27 +568,73 @@ const ManagePenitip = () => {
                     onChange={handleInputChange}
                     rows="3"
                     className="w-full p-2 border border-gray-300 rounded-md"
+                    required
                   />
                 </div>
                 {!editingPenitipId && (
-                  <div>
+                  <div className="relative">
                     <label className="block text-sm font-medium mb-1">
                       Password <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       value={newPenitip.password}
                       onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md pr-10"
                       required
                     />
+                    <button
+                      type="button"
+                      className="absolute right-2 top-9 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.79m0 0L21 21"
+                          ></path>
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          ></path>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          ></path>
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 )}
-
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium mb-1">
-                    Foto KTP
+                    Foto KTP{" "}
+                    {!editingPenitipId && (
+                      <span className="text-red-500">*</span>
+                    )}
                   </label>
                   <input
                     type="file"
@@ -582,6 +642,7 @@ const ManagePenitip = () => {
                     onChange={handleFileChange}
                     className="w-full p-2 border border-gray-300 rounded-md"
                     accept="image/jpeg,image/png,image/jpg,image/gif"
+                    required={!editingPenitipId}
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Format yang diperbolehkan: JPG, PNG, JPEG, GIF. Maks: 2MB.

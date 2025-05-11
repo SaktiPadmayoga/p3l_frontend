@@ -8,6 +8,8 @@ import {
 } from "react-router-dom";
 import Dashboard from "./layouts/Administrator/Dashboard";
 import Login from "./auth/login/login";
+import ForgotPass from "./auth/login/forgotPass";
+import ResetPass from "./auth/login/resetPass";
 import Register from "./auth/register/register";
 import RegisterTypeSelection from "./auth/register/RegisterTypeSelection";
 import RegisterOrganisasi from "./auth/register/RegisterOrganisasi";
@@ -15,19 +17,19 @@ import HomePage from "./layouts/user/pages/homepage";
 import Catalogue from "./layouts/user/pages/Catalogue";
 import UserNavbar from "./layouts/user/components/UserNavbar";
 import DetailProduct from "./layouts/user/pages/DetailProduct";
-import Profile from "./layouts/user/pages/Profile";
-import ManagePegawai from "./layouts/administrator/pages/ManagePegawai";
-import ManagePenitip from "./layouts/administrator/pages/ManagePenitip";
-import ManageJabatan from "./layouts/administrator/pages/ManageJabatan";
-import ManageOrganisasi from "./layouts/administrator/pages/ManageOrganisasi";
-import ManageMerchandise from "./layouts/administrator/pages/ManageMerchandise";
-import ManageRequestDonasi from "./layouts/administrator/pages/ManageRequestDonasi";
-import DaftarRequestDonasi from "./layouts/administrator/pages/DaftarRequestDonasi";
-import HistoryDonasi from "./layouts/administrator/pages/HistoryDonasi";
-import ManageBarangTitipan from "./layouts/administrator/pages/ManageBarangTitipan";
-import ManageTransaksiPenitipan from "./layouts/administrator/pages/ManageTransaksiPenitipan";
-import ManageDiskusi from "./layouts/administrator/pages/ManageDiskusi";
-import DashboardContent from "./layouts/administrator/pages/DashboardContent";
+import Profile from "./layouts/user/pages/profile";
+import ManagePegawai from "./layouts/Administrator/pages/ManagePegawai";
+import ManagePenitip from "./layouts/Administrator/pages/ManagePenitip";
+import ManageJabatan from "./layouts/Administrator/pages/ManageJabatan";
+import ManageOrganisasi from "./layouts/Administrator/pages/ManageOrganisasi";
+import ManageMerchandise from "./layouts/Administrator/pages/ManageMerchandise";
+import ManageRequestDonasi from "./layouts/Administrator/pages/ManageRequestDonasi";
+import DaftarRequestDonasi from "./layouts/Administrator/pages/DaftarRequestDonasi";
+import HistoryDonasi from "./layouts/Administrator/pages/HistoryDonasi";
+import ManageBarangTitipan from "./layouts/Administrator/pages/ManageBarangTitipan";
+import ManageTransaksiPenitipan from "./layouts/Administrator/pages/ManageTransaksiPenitipan";
+import ManageDiskusi from "./layouts/Administrator/pages/ManageDiskusi";
+import DashboardContent from "./layouts/Administrator/pages/DashboardContent";
 import AuthService from "./services/authService";
 
 // Layout component that includes navbar and footer
@@ -63,8 +65,21 @@ const AdminRoute = ({ children }) => {
   const isAuthenticated = AuthService.isAuthenticated();
   const userType = AuthService.getUserType();
 
-  if (!isAuthenticated || userType !== "pegawai") {
+  if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+
+  // Allow pegawai for all admin routes, and organisasi only for manage-request-donasi
+  if (userType !== "pegawai" && userType !== "organisasi") {
+    return <Navigate to="/login" />;
+  }
+
+  // Restrict organisasi to only manage-request-donasi
+  if (
+    userType === "organisasi" &&
+    window.location.pathname !== "/admin/manage-request-donasi"
+  ) {
+    return <Navigate to="/admin/manage-request-donasi" />;
   }
 
   return children;
@@ -89,6 +104,8 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/forgotPass" element={<ForgotPass />} />
+        <Route path="/reset-password" element={<ResetPass />} />
         <Route path="/register-selection" element={<RegisterTypeSelection />} />
         <Route path="/register" element={<Register />} />
         <Route path="/register-organisasi" element={<RegisterOrganisasi />} />
@@ -119,21 +136,21 @@ function App() {
           />
           <Route path="history-donasi" element={<HistoryDonasi />} />
           <Route
-            path="manage-barang-titipan"
+            path="manage-barang-penitipan"
             element={<ManageBarangTitipan />}
           />
           <Route
             path="manage-transaksi-penitipan"
             element={<ManageTransaksiPenitipan />}
           />
-          <Route path="manage-diskusi" element={<ManageDiskusi />} />  
+          <Route path="manage-diskusi" element={<ManageDiskusi />} />
         </Route>
 
         {/* User layout */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalogue" element={<Catalogue />} />
-          <Route path="/detail-product" element={<DetailProduct />} />
+          <Route path="/detail-product/:id" element={<DetailProduct />} />
           <Route
             path="/profile"
             element={

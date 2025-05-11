@@ -1,10 +1,78 @@
-import { useState } from 'react';
-import { User, Home, ShoppingBag, Heart, Clock, Settings, Bell } from 'lucide-react';
-import AddressManagement from '../components/ManageAddress';
+
+import React, { useEffect, useState } from "react";
+import { User, Home, ShoppingBag, Bell, Package } from "lucide-react";
+import AddressManagement from "../components/ManageAddress";
+import HistoryPembelian from "../components/HistoryPembelian";
+import HistoryPenitipan from "../components/HistoryPenitipan";
+import axios from "axios";
+
 
 export default function Profile() {
-  const [activeTab, setActiveTab] = useState('profile');
-  
+  const [activeTab, setActiveTab] = useState("profile");
+  const [userRoles, setUserRoles] = useState([]);
+  const [userPermissions, setUserPermissions] = useState([]);
+  const [userType, setUserType] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getUserData = () => {
+      try {
+        setIsLoading(true);
+
+        // Get user data from localStorage
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        const userType = localStorage.getItem("userType");
+
+        if (!userData || !userType) {
+          console.error("No user data or userType found in localStorage");
+          setError("User data not found. Please log in again.");
+          setIsLoading(false);
+          return;
+        }
+
+        // Set user type
+        setUserType(userType);
+
+        // Set roles
+        setUserRoles(userData.role || []);
+
+        // Set permissions
+        setUserPermissions(userData.permissions || []);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+        setError("Failed to load user data.");
+        setIsLoading(false);
+      }
+    };
+
+    getUserData();
+  }, []);
+
+  // Functions to check roles and permissions
+  const hasRole = (role) => {
+    const result = userRoles.includes(role);
+    return result;
+  };
+  const hasPermission = (permission) => {
+    const result = userPermissions.includes(permission);
+    return result;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="text-center text-gray-600 mt-10">
+        Memuat data profil...
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-600 mt-10">{error}</div>;
+  }
+
   return (
     <div className="flex h-[80vh] rounded-2xl bg-gray-50 mx-16 mt-28">
       {/* Sidebar */}
@@ -13,39 +81,58 @@ export default function Profile() {
           <h1 className="text-3xl font-bold text-stone-600">User Profile</h1>
         </div>
         <div className="px-2">
-          <SidebarItem 
-            icon={<User size={24} />} 
-            text="User Info" 
-            active={activeTab === 'profile'} 
-            onClick={() => setActiveTab('profile')}
+          <SidebarItem
+            icon={<User size={24} />}
+            text="User Info"
+            active={activeTab === "profile"}
+            onClick={() => setActiveTab("profile")}
           />
-          <SidebarItem 
-            icon={<Home size={24} />} 
-            text="Address" 
-            active={activeTab === 'address'} 
-            onClick={() => setActiveTab('address')}
-          />
-          <SidebarItem 
-            icon={<ShoppingBag size={24} />} 
-            text="Transactions" 
-            active={activeTab === 'transactions'} 
-            onClick={() => setActiveTab('transactions')}
-          />
-          <SidebarItem 
-            icon={<Bell size={24} />} 
-            text="Notifications" 
-            active={activeTab === 'notifications'} 
-            onClick={() => setActiveTab('notifications')}
+
+          {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
+            <SidebarItem
+              icon={<Home size={24} />}
+              text="Address"
+              active={activeTab === "address"}
+              onClick={() => setActiveTab("address")}
+            />
+          )}
+          
+          {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
+            <SidebarItem
+              icon={<ShoppingBag size={24} />}
+              text="Transaksi Pembelian"
+              active={activeTab === "pembelian"}
+              onClick={() => setActiveTab("pembelian")}
+            />
+          )}
+          {hasRole("penitip") && hasPermission("view-history-penitipan") && (
+            <SidebarItem
+              icon={<Package size={24} />}
+              text="Transaksi Penitipan"
+              active={activeTab === "penitipan"}
+              onClick={() => setActiveTab("penitipan")}
+            />
+          )}
+          <SidebarItem
+            icon={<Bell size={24} />}
+            text="Notifications"
+            active={activeTab === "notifications"}
+            onClick={() => setActiveTab("notifications")}
           />
         </div>
       </div>
-      
+
       {/* Main Content */}
-      <div className="flex-1 p-8">
-        {activeTab === 'profile' && <ProfilePage />}
-        {activeTab === 'address' && <AddressPage />}
-        {activeTab === 'transactions' && <TransactionsPage />}
-        {activeTab === 'notifications' && <PlaceholderPage title="Notifications" />}
+      <div className="flex-1 p-8 overflow-auto">
+
+        {activeTab === "profile" && <ProfilePage />}
+        {activeTab === "address" && <AddressPage />}
+        {activeTab === "pembelian" && <HistoryPembelian />}
+        {activeTab === "penitipan" && <HistoryPenitipan />}
+        {activeTab === "notifications" && (
+          <PlaceholderPage title="Notifications" />
+        )}
+
       </div>
     </div>
   );
@@ -53,8 +140,12 @@ export default function Profile() {
 
 function SidebarItem({ icon, text, active, onClick }) {
   return (
-    <div 
-      className={`flex items-center text-xl p-3 mb-2 rounded-lg cursor-pointer ${active ? 'bg-stone-50 text-stone-600 font-medium' : 'text-gray-500 hover:bg-gray-100'}`}
+    <div
+      className={`flex items-center text-xl p-3 mb-2 rounded-lg cursor-pointer ${
+        active
+          ? "bg-stone-50 text-stone-600 font-medium"
+          : "text-gray-500 hover:bg-gray-100"
+      }`}
       onClick={onClick}
     >
       <div className="mr-3">{icon}</div>
@@ -65,89 +156,112 @@ function SidebarItem({ icon, text, active, onClick }) {
 }
 
 function ProfilePage() {
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No authentication token found.");
+        }
+
+        const response = await axios.get(
+          "http://localhost:8000/api/auth/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setUserData(response.data);
+
+        // Update localStorage with fresh user data
+        localStorage.setItem(
+          "userData",
+          JSON.stringify({
+            role: response.data.user.role || [],
+            permissions: response.data.user.permissions || [],
+          })
+        );
+        localStorage.setItem("userType", response.data.user_type || "");
+      } catch (error) {
+        console.error("Gagal mengambil data profil:", error);
+        setError("Failed to fetch profile data.");
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  if (error) {
+    return <div className="text-center text-red-600 mt-10">{error}</div>;
+  }
+
+  if (!userData) {
+    return (
+      <div className="text-center text-gray-600 mt-10">
+        Memuat data profil...
+      </div>
+    );
+  }
+
+  const { user_type, user } = userData;
+
   return (
-    <div>
-      <div className="flex items-center mb-10">
-        <div className="relative">
-          <img 
-            src="/api/placeholder/150/150" 
-            alt="Profile" 
-            className="w-24 h-24 rounded-full object-cover"
-          />
-          <button className="absolute bottom-0 right-0 bg-stone-500 text-white p-1 rounded-full">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-            </svg>
-          </button>
-        </div>
-        <div className="ml-6">
-          <h2 className="text-2xl font-bold">Sara Tancredi</h2>
-          <p className="text-gray-500">New York, USA</p>
+    <div className="max-w-3xl mx-auto mt-6 p-8 bg-white shadow-lg rounded-2xl">
+      <div className="flex items-center space-x-6">
+        <img
+          src="/api/placeholder/150/150"
+          alt="Profile"
+          className="w-24 h-24 rounded-full object-cover border-2 border-stone-300"
+        />
+        <div>
+          <h2 className="text-3xl font-semibold text-stone-700">{user.nama}</h2>
+          <p className="text-stone-500">{user.email}</p>
         </div>
       </div>
-      
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Name</label>
-          <input 
-            type="text" 
-            className="w-full p-3 border rounded-lg" 
-            value="Sara" 
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Full Name</label>
-          <input 
-            type="text" 
-            className="w-full p-3 border rounded-lg" 
-            value="Tancredi" 
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Email Address</label>
-          <input 
-            type="email" 
-            className="w-full p-3 border rounded-lg" 
-            value="Sara.Tancredi@gmail.com" 
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Phone Number</label>
-          <input 
-            type="text" 
-            className="w-full p-3 border rounded-lg" 
-            value="(+98) 9123728167" 
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Location</label>
-          <input 
-            type="text" 
-            className="w-full p-3 border rounded-lg" 
-            value="New York, USA" 
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm text-gray-500 mb-1">Postal Code</label>
-          <input 
-            type="text" 
-            className="w-full p-3 border rounded-lg" 
-            value="23728167" 
-            readOnly
-          />
-        </div>
+
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-stone-700">
+        <ProfileItem label="Tipe Pengguna" value={user_type} />
+        <ProfileItem label="ID Pengguna" value={user.id} />
+
+        {user_type !== "organisasi" && (
+          <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
+        )}
+        <ProfileItem label="Role" value={user.role.join(", ")} />
+        {user_type === "penitip" && (
+          <ProfileItem label="Saldo" value={user.saldo} />
+        )}
+        {user_type === "organisasi" && (
+
+          <>
+            <ProfileItem label="Alamat" value={user.alamat} />
+            <ProfileItem label="Telepon" value={user.telepon} />
+            <ProfileItem label="Deskripsi" value={user.deskripsi} />
+          </>
+        )}
+
+        
+
       </div>
-      
-      <div className="mt-8">
-        <button className="bg-stone-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-stone-700">
-          Save Changes
+
+      <div className="mt-10 text-right">
+        <button className="bg-stone-600 text-white px-6 py-3 rounded-lg hover:bg-stone-700 transition">
+          Edit Profil
         </button>
       </div>
+    </div>
+  );
+}
+
+function ProfileItem({ label, value }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500 mb-1">{label}</p>
+      <div className="p-3 border rounded-lg bg-gray-50">{value}</div>
     </div>
   );
 }
@@ -160,140 +274,12 @@ function AddressPage() {
   );
 }
 
-function TransactionsPage() {
-  const transactions = [
-    { 
-      id: 1, 
-      date: '2025-04-15', 
-      description: 'Online Purchase', 
-      amount: '$129.99', 
-      status: 'Completed',
-      paymentMethod: 'Credit Card'
-    },
-    { 
-      id: 2, 
-      date: '2025-04-10', 
-      description: 'Subscription Renewal', 
-      amount: '$9.99', 
-      status: 'Completed',
-      paymentMethod: 'PayPal'
-    },
-    { 
-      id: 3, 
-      date: '2025-04-05', 
-      description: 'Mobile Phone Case', 
-      amount: '$24.99', 
-      status: 'Processing',
-      paymentMethod: 'Credit Card'
-    },
-    { 
-      id: 4, 
-      date: '2025-03-30', 
-      description: 'Annual Membership', 
-      amount: '$99.00', 
-      status: 'Completed',
-      paymentMethod: 'Bank Transfer'
-    },
-    { 
-      id: 5, 
-      date: '2025-03-22', 
-      description: 'Wireless Headphones', 
-      amount: '$149.99', 
-      status: 'Completed',
-      paymentMethod: 'Credit Card'
-    }
-  ];
-
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Transaction History</h2>
-        <div className="flex space-x-2">
-          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">
-            Filter
-          </button>
-          <button className="bg-stone-50 text-stone-600 px-4 py-2 rounded-lg hover:bg-stone-100">
-            Export
-          </button>
-        </div>
-      </div>
-      
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Payment Method
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {transactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {transaction.date}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {transaction.description}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {transaction.amount}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {transaction.paymentMethod}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    transaction.status === 'Completed' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {transaction.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button className="text-stone-600 hover:text-stone-800">
-                    View Details
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      
-      <div className="mt-6 flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          Showing 1 to 5 of 5 entries
-        </div>
-        <div className="flex space-x-1">
-          <button className="px-3 py-1 bg-stone-50 text-stone-600 rounded">1</button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function PlaceholderPage({ title }) {
   return (
-    <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold text-gray-400">{title} Page</h2>
-      <p className="text-gray-400 mt-2">This page is not implemented in this demo</p>
+    <div className="text-center text-gray-500 mt-20">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p>Fitur ini belum tersedia.</p>
     </div>
   );
 }

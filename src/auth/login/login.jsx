@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import AuthService from "../../services/authService"; // Adjust the import path as necessary
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import AuthService from "../../services/authService";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (AuthService.isAuthenticated()) {
       const userType = AuthService.getUserType();
@@ -18,9 +17,21 @@ const Login = () => {
         navigate("/admin/dashboard");
       } else if (userType === "pembeli") {
         navigate("/");
+      } else if (userType === "organisasi") {
+        navigate("/");
+      } else if (userType === "penitip") {
+        navigate("/");
       }
     }
-  }, [navigate]);
+
+    // Display message from state if present
+    if (location.state?.message) {
+      setError(location.state.message);
+      // Clear error message after 5 seconds
+      const timer = setTimeout(() => setError(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [navigate, location]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,13 +40,15 @@ const Login = () => {
 
     try {
       const response = await AuthService.login(email, password);
-
-      // Dispatch a custom event to notify other components about authentication
       window.dispatchEvent(new Event("authChange"));
 
       if (response.user_type === "pegawai") {
         navigate("/admin/dashboard");
       } else if (response.user_type === "pembeli") {
+        navigate("/");
+      } else if (response.user_type === "organisasi") {
+        navigate("/admin/manage-request-donasi");
+      } else if (response.user_type === "penitip") {
         navigate("/");
       }
     } catch (err) {
@@ -59,7 +72,9 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded mb-4">{error}</div>
+          <div className="bg-red-50 text-red-600 p-4 rounded mb-4 font-medium text-center">
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleLogin}>
@@ -87,6 +102,14 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <div className="mt-2 text-right">
+              <Link
+                to="/forgotPass"
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
 
           <button

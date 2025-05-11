@@ -1,351 +1,291 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../../../utils/axiosInstance";
 
-export default function AddressManagement() {
+const AddressManagement = () => {
   const [addresses, setAddresses] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
-    address: "",
-    city: "",
-    postal_code: ""
+    JALAN: "",
+    KECAMATAN: "",
+    KELURAHAN: "",
+    KOTA: "",
+    KODE_POS: "",
+    ALAMAT_UTAMA: false,
   });
+  const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Mock user data - in a real app, this would come from authentication
-  const user = {
-    name: "John Doe",
-    phone: "0812345678"
+  useEffect(() => {
+    fetchAddresses();
+  }, [searchQuery]); // Tambahkan searchQuery sebagai dependensi
+
+  const fetchAddresses = async () => {
+    try {
+      setLoading(true);
+      setLoadError(null);
+      const response = await axiosInstance.get("/pembeli/alamat", {
+        params: { search: searchQuery }, // Kirim query pencarian ke backend
+      });
+      setAddresses(response.data);
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+      setLoadError("Gagal memuat data alamat. Coba lagi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Mock initial addresses - in a real app, these would come from an API
-  useEffect(() => {
-    setAddresses([
-      {
-        id: 1,
-        address: "Jl. Merdeka No. 123",
-        city: "Jakarta",
-        postal_code: "12345"
-      },
-      {
-        id: 2,
-        address: "Jl. Pahlawan No. 456",
-        city: "Surabaya",
-        postal_code: "54321"
-      }
-    ]);
-  }, []);
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value); // Update state pencarian
+  };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); // Mencegah reload halaman
+    fetchAddresses(); // Panggil fungsi fetchAddresses untuk mendapatkan alamat
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: type === "checkbox" ? checked : value,
     });
   };
 
-  const openAddModal = () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingId) {
+        await axiosInstance.put(`/pembeli/alamat/${editingId}`, formData);
+      } else {
+        await axiosInstance.post("/pembeli/alamat", formData);
+      }
+      resetForm();
+      fetchAddresses();
+    } catch (error) {
+      console.error("Gagal menyimpan alamat:", error);
+    }
+  };
+
+  const handleEdit = (alamat) => {
     setFormData({
-      address: "",
-      city: "",
-      postal_code: ""
+      JALAN: alamat.JALAN,
+      KECAMATAN: alamat.KECAMATAN,
+      KELURAHAN: alamat.KELURAHAN,
+      KOTA: alamat.KOTA,
+      KODE_POS: alamat.KODE_POS,
+      ALAMAT_UTAMA: alamat.ALAMAT_UTAMA === 1, // pastikan checkbox aktif jika 1
     });
-    setShowAddModal(true);
+    setEditingId(alamat.ID_ALAMAT);
+    setIsModalOpen(true);
   };
 
-  const openEditModal = (address) => {
-    setCurrentAddress(address);
+  const handleDelete = async (id) => {
+    try {
+      await axiosInstance.delete(`/pembeli/alamat/${id}`);
+      fetchAddresses();
+    } catch (error) {
+      console.error("Gagal menghapus alamat:", error);
+    }
+  };
+
+  const resetForm = () => {
     setFormData({
-      address: address.address,
-      city: address.city,
-      postal_code: address.postal_code
+      JALAN: "",
+      KECAMATAN: "",
+      KELURAHAN: "",
+      KOTA: "",
+      KODE_POS: "",
+      ALAMAT_UTAMA: false,
     });
-    setShowEditModal(true);
-  };
-
-  const openDeleteModal = (address) => {
-    setCurrentAddress(address);
-    setShowDeleteModal(true);
-  };
-
-  const addAddress = (e) => {
-    e.preventDefault();
-    const newAddress = {
-      id: Date.now(),
-      ...formData
-    };
-    setAddresses([...addresses, newAddress]);
-    setShowAddModal(false);
-  };
-
-  const updateAddress = (e) => {
-    e.preventDefault();
-    const updatedAddresses = addresses.map(addr => 
-      addr.id === currentAddress.id ? { ...addr, ...formData } : addr
-    );
-    setAddresses(updatedAddresses);
-    setShowEditModal(false);
-  };
-
-  const deleteAddress = (e) => {
-    e.preventDefault();
-    const filteredAddresses = addresses.filter(addr => addr.id !== currentAddress.id);
-    setAddresses(filteredAddresses);
-    setShowDeleteModal(false);
+    setEditingId(null);
+    setIsModalOpen(false);
   };
 
   return (
-    <div className=" mx-auto my-8 px-4">
-      <div className=" p-6">
-      <h2 className="text-2xl font-bold mb-4">Manage Address</h2>
-        
-        <div className="space-y-4">
-          {addresses.length > 0 ? (
-            addresses.map((address) => (
-              <div key={address.id} className="border border-teal-500 p-4 rounded-md bg-white mb-4">
-                <div className="flex flex-col sm:flex-row">
-                  <div className="flex-1">
-                    <h5 className="font-medium">{user.name}</h5>
-                    <p className="m-0 text-gray-700">{user.phone}</p>
-                    <p className="text-gray-700">
-                      {address.address}, {address.city}, {address.postal_code}
-                    </p>
-                    <div className="flex space-x-4 mt-2">
-                      <button
-                        className="text-blue-500"
-                        onClick={() => openEditModal(address)}
-                      >
-                        Edit
-                      </button>
-                      <span className="block w-0.5 h-6 bg-black"></span>
-                      <button
-                        className="text-red-500"
-                        onClick={() => openDeleteModal(address)}
-                      >
-                        Hapus
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500">Tidak ada alamat yang tersedia.</p>
-          )}
-          
-          <div className="flex justify-center">
-            <button
-              onClick={openAddModal}
-              className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
-            >
-              + Add New Address
-            </button>
-          </div>
-        </div>
+    <div className="max-w-4xl mx-auto px-4 py-8 relative">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">Manajemen Alamat</h2>
+
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+        >
+          Tambah Alamat
+        </button>
       </div>
 
-      {/* Add Address Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-xl">
-            <div className="bg-green-500 p-4 rounded-t-lg flex justify-between items-center">
-              <h1 className="text-white text-lg font-medium">+ Add Address</h1>
-              <button onClick={() => setShowAddModal(false)} className="text-white hover:text-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6">
-              <form onSubmit={addAddress}>
-                <div className="flex flex-wrap">
-                  <div className="w-full p-4">
-                    <div className="mb-4">
-                      <label htmlFor="add_name" className="block mb-2 text-sm font-medium text-gray-700">Name</label>
-                      <input
-                        id="add_name"
-                        type="text"
-                        name="name"
-                        className="w-full bg-gray-100 border rounded px-4 py-2"
-                        value={user.name}
-                        disabled
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="add_phone" className="block mb-2 text-sm font-medium text-gray-700">Phone</label>
-                      <input
-                        id="add_phone"
-                        type="number"
-                        className="w-full bg-gray-100 border rounded px-4 py-2"
-                        value={user.phone}
-                        disabled
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="add_address" className="block mb-2 text-sm font-medium text-gray-700">Address Detail</label>
-                      <textarea
-                        id="add_address"
-                        name="address"
-                        className="w-full border rounded px-4 py-2 h-24"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="add_city" className="block mb-2 text-sm font-medium text-gray-700">City</label>
-                      <input
-                        id="add_city"
-                        type="text"
-                        name="city"
-                        className="w-full border rounded px-4 py-2"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="add_postal_code" className="block mb-2 text-sm font-medium text-gray-700">Postal Code</label>
-                      <input
-                        id="add_postal_code"
-                        type="text"
-                        name="postal_code"
-                        className="w-full border rounded px-4 py-2"
-                        value={formData.postal_code}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
-                    >
-                      Add Address
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <form onSubmit={handleSearchSubmit} className="mb-4">
+        <input
+          type="text"
+          placeholder="Cari alamat..."
+          value={searchQuery}
+          onChange={handleSearchChange}
+          className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </form>
 
-      {/* Edit Address Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl">
-            <div className="bg-green-500 p-4 rounded-t-lg flex justify-between items-center">
-              <h1 className="text-white text-lg font-medium">Edit Address</h1>
-              <button onClick={() => setShowEditModal(false)} className="text-white hover:text-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6">
-              <form onSubmit={updateAddress}>
-                <div className="flex flex-wrap">
-                  <div className="w-full p-4">
-                    <div className="mb-4">
-                      <label htmlFor="edit_name" className="block mb-2 text-sm font-medium text-gray-700">Name</label>
-                      <input
-                        id="edit_name"
-                        type="text"
-                        name="name"
-                        className="w-full bg-gray-100 border rounded px-4 py-2"
-                        value={user.name}
-                        disabled
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="edit_phone" className="block mb-2 text-sm font-medium text-gray-700">Phone</label>
-                      <input
-                        id="edit_phone"
-                        type="number"
-                        className="w-full bg-gray-100 border rounded px-4 py-2"
-                        value={user.phone}
-                        disabled
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="edit_address" className="block mb-2 text-sm font-medium text-gray-700">Address Detail</label>
-                      <textarea
-                        id="edit_address"
-                        name="address"
-                        className="w-full border rounded px-4 py-2 h-24"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="edit_city" className="block mb-2 text-sm font-medium text-gray-700">City</label>
-                      <input
-                        id="edit_city"
-                        type="text"
-                        name="city"
-                        className="w-full border rounded px-4 py-2"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label htmlFor="edit_postal_code" className="block mb-2 text-sm font-medium text-gray-700">Postal Code</label>
-                      <input
-                        id="edit_postal_code"
-                        type="text"
-                        name="postal_code"
-                        className="w-full border rounded px-4 py-2"
-                        value={formData.postal_code}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
-                    >
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
+      {isModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="absolute inset-0 bg-black/50 pointer-events-none"></div>
+    <div className="relative bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <h3 className="text-xl font-semibold mb-4 text-gray-700">
+        {editingId ? "Edit Alamat" : "Tambah Alamat"}
+      </h3>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label htmlFor="JALAN" className="block mb-1 font-semibold text-gray-700">
+              Jalan
+            </label>
+            <input
+              id="JALAN"
+              type="text"
+              name="JALAN"
+              placeholder="Cth : Jl. Babarsari No. 1"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.JALAN}
+              onChange={handleChange}
+              required
+            />
           </div>
-        </div>
-      )}
+          <div>
+            <label htmlFor="KECAMATAN" className="block mb-1 font-semibold text-gray-700">
+              Kecamatan
+            </label>
+            <input
+              id="KECAMATAN"
+              type="text"
+              name="KECAMATAN"
+              placeholder="Cth : Depok"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KECAMATAN}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KELURAHAN" className="block mb-1 font-semibold text-gray-700">
+              Kelurahan
+            </label>
+            <input
+              id="KELURAHAN"
+              type="text"
+              name="KELURAHAN"
+              placeholder="Cth : Caturtunggal"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KELURAHAN}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KOTA" className="block mb-1 font-semibold text-gray-700">
+              Kota
+            </label>
+            <input
+              id="KOTA"
+              type="text"
+              name="KOTA"
+              placeholder="Cth : Sleman"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KOTA}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="KODE_POS" className="block mb-1 font-semibold text-gray-700">
+              Kode Pos
+            </label>
+            <input
+              id="KODE_POS"
+              type="text"
+              name="KODE_POS"
+              placeholder="Cth : 55281"
+              className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.KODE_POS}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-      {/* Delete Address Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
-            <div className="bg-green-500 p-4 rounded-t-lg">
-              <h1 className="text-white text-lg font-medium">Delete Address</h1>
+          <label className="flex items-center gap-2 mt-2 md:col-span-2">
+            <input
+              type="checkbox"
+              name="ALAMAT_UTAMA"
+              checked={formData.ALAMAT_UTAMA}
+              onChange={handleChange}
+              className="w-5 h-5 text-blue-600"
+            />
+            <span className="text-gray-700">Jadikan sebagai Alamat Utama</span>
+          </label>
+        </div>
+        <div className="flex justify-end mt-4 gap-2">
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            {editingId ? "Update Alamat" : "Tambah Alamat"}
+          </button>
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
+          >
+            Batal
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+
+      <h3 className="text-xl font-semibold mb-4 text-gray-700 mt-8">Daftar Alamat</h3>
+      {loading ? (
+        <p className="text-gray-500">Memuat data alamat...</p>
+      ) : loadError ? (
+        <p className="text-red-500">{loadError}</p>
+      ) : (
+        <div className="space-y-4">
+          {addresses.map((alamat) => (
+            <div
+              key={alamat.ID_ALAMAT}
+              className="bg-white shadow-sm rounded-lg p-4 flex justify-between items-start"
+            >
+              <div>
+                <p className="font-medium text-gray-800">
+                  {alamat.JALAN}, {alamat.KECAMATAN}, {alamat.KELURAHAN}, {alamat.KOTA}, {alamat.KODE_POS}
+                </p>
+                {alamat.ALAMAT_UTAMA === 1 && (
+                  <span className="inline-block bg-green-100 text-green-800 text-sm px-2 py-1 rounded mt-1">
+                    Alamat Utama
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleEdit(alamat)}
+                  className="text-sm bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(alamat.ID_ALAMAT)}
+                  className="text-sm bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                >
+                  Hapus
+                </button>
+              </div>
             </div>
-            <div className="p-6">
-              <form onSubmit={deleteAddress}>
-                <p className="text-center text-gray-700 mb-6">Apakah Anda yakin ingin menghapus alamat ini?</p>
-                <div className="flex justify-between mt-6">
-                  <button
-                    type="button"
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
-                    onClick={() => setShowDeleteModal(false)}
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          ))}
         </div>
       )}
     </div>
   );
-}
+};
+
+export default AddressManagement;

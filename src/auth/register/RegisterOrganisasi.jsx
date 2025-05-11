@@ -36,11 +36,13 @@ const RegisterOrganization = () => {
     }));
   };
 
+  // In the handleSubmit function of RegisterOrganization.jsx
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Reset error message
 
-    // Create a new FormData object (with a different name to avoid conflict)
+    // Create FormData object
     const formDataToSend = new FormData();
 
     // Append form values to FormData
@@ -57,12 +59,6 @@ const RegisterOrganization = () => {
       formDataToSend.append("FOTO_ORGANISASI", logoInput.files[0]);
     }
 
-    console.log("Form Data:", formData); // Log the React state data
-    console.log(
-      "Sending form data to server with fields:",
-      Array.from(formDataToSend.entries()).map(([key]) => key)
-    );
-
     try {
       const response = await axios.post(
         "http://localhost:8000/api/auth/register/organisasi",
@@ -75,21 +71,47 @@ const RegisterOrganization = () => {
       );
 
       if (response.status === 201) {
-        // Redirect to login page after successful registration
-        navigate("/login");
+        // Show success message
+        const successMessage = "Registrasi berhasil! Redirecting to login...";
+        setError(successMessage); // You could use a separate state for success messages
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
       }
     } catch (err) {
-      console.error("Registration error:", err); // Log the error to the console
-      if (err.response && err.response.data) {
-        // Handle validation errors
+      console.error("Registration error:", err);
+
+      if (err.response) {
+        // The server responded with an error status
         if (err.response.data.errors) {
-          const errorMessages = Object.values(err.response.data.errors).flat();
-          setError(errorMessages.join(", "));
+          // Format validation errors nicely
+          const errorMessages = Object.entries(err.response.data.errors)
+            .map(([field, messages]) => {
+              return `${
+                field.charAt(0).toUpperCase() + field.slice(1)
+              }: ${messages.join(", ")}`;
+            })
+            .join("\n");
+
+          setError(errorMessages);
+        } else if (err.response.data.error) {
+          // Single error message
+          setError(err.response.data.error);
+        } else if (err.response.data.message) {
+          setError(err.response.data.message);
+        } else if (err.response.status === 500) {
+          setError("Server error. Please try again later.");
         } else {
-          setError(err.response.data.message || "Registration failed");
+          setError(`Error ${err.response.status}: Registration failed`);
         }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError("No response from server. Please check your connection.");
       } else {
-        setError("An error occurred. Please try again.");
+        // Something happened in setting up the request
+        setError("An unexpected error occurred.");
       }
     }
   };

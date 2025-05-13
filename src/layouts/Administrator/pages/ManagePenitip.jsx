@@ -382,7 +382,7 @@ const ManagePenitip = () => {
             resetForm();
             setIsModalOpen(true);
           }}
-          className="bg-stone-600 text-white px-4 py-3 text-lg rounded-md hover:bg-stone-700"
+          className="bg-olive-500 text-white px-4 py-3 text-lg rounded-md hover:bg-olive-900"
         >
           + Tambah Penitip
         </button>
@@ -391,7 +391,7 @@ const ManagePenitip = () => {
       {/* Tabel Penitip */}
       {loading ? (
         <div className="flex justify-center items-center h-32">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-stone-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-olive-500"></div>
           <p className="ml-3">Loading data...</p>
         </div>
       ) : (
@@ -411,7 +411,7 @@ const ManagePenitip = () => {
                 ].map((header) => (
                   <th
                     key={header}
-                    className="px-6 py-4 bg-stone-600 text-lg font-medium text-white uppercase tracking-wider"
+                    className="px-6 py-4 bg-olive-500 text-lg font-medium text-white uppercase tracking-wider"
                   >
                     {header}
                   </th>
@@ -689,7 +689,7 @@ const ManagePenitip = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-stone-600 text-white px-4 py-2 rounded-md hover:bg-stone-700"
+                  className="bg-olive-500 text-white px-4 py-2 rounded-md hover:bg-olive-900"
                 >
                   Simpan
                 </button>

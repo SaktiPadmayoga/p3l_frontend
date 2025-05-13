@@ -7,14 +7,14 @@ const Header = ({ sidebarOpen, setSidebarOpen }) => {
       <div className="relative w-full flex items-center justify-between p-4 pr-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
-          <p className="text-sm text-gray-600">Welcome back, Admin</p>
+          <p className="text-sm text-olive-500">Welcome back, Admin</p>
         </div>
         
         {/* Show menu button only on mobile (smaller than sm breakpoint) */}
         <div className="block sm:hidden">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-stone-600 hover:text-white"
+            className="p-2 rounded-lg hover:bg-olive-500 hover:text-white"
           >
             <Menu size={20} />
           </button>

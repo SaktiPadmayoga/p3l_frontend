@@ -14,66 +14,79 @@ import {
   SparklesIcon,
 } from "lucide-react";
 
+
+import Baju from "../../../assets/Baju.png"
+import Ps from "../../../assets/ps.png"
+import Blender from "../../../assets/blender.png"
+import Figure from "../../../assets/figure2.png"
+import Buku from "../../../assets/buku.png"
+import BajuBayi from "../../../assets/bajubayi.png"
+import Tenda from "../../../assets/tenda.png"
+import Printer from "../../../assets/printer.png"
+import BoxMakeup from "../../../assets/boxmakeup.png"
+import Sepeda from "../../../assets/sepeda.jpeg"
+import Hero from "../../../assets/hero-bg.png"
+
 // Data item dan konfigurasi
 const itemsData = [
     { 
       name: "Elektronik & Gadget", 
       icon: <TvIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=800&auto=format&fit=crop&q=80",
+      url: Ps,
       description: "Smartphone, Laptop, Kamera, TV, Konsol Game",
     },
     { 
       name: "Pakaian & Aksesori", 
       icon: <ShirtIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?w=800&auto=format&fit=crop&q=80",
+      url: Baju,
       description: "Pakaian, Sepatu, Tas, Perhiasan",
     },
     { 
       name: "Perabotan Rumah Tangga", 
       icon: <HomeIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&auto=format&fit=crop&q=80",
+      url: Blender,
       description: "Sofa, Meja, Kursi, Lemari",
     },
     { 
-      name: "Buku & Alat Tulis", 
+      name: "Buku, Alat Tulis & Peralatan Sekolah", 
       icon: <BookIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?w=800&auto=format&fit=crop&q=80",
+      url: Buku,
       description: "Buku Pelajaran, Komik, Alat Tulis",
     },
     { 
-      name: "Hobi & Mainan", 
+      name: "Hobi, Mainan & Koleksi", 
       icon: <ToyBrickIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=800&auto=format&fit=crop&q=80",
+      url: Figure,
       description: "Mainan Anak, Alat Musik, Barang Koleksi",
     },
     { 
-      name: "Perlengkapan Bayi", 
+      name: "Perlengkapan Bayi & Anak", 
       icon: <BabyIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1519689680058-324335c77eba?w=800&auto=format&fit=crop&q=80",
+      url: BajuBayi,
       description: "Pakaian Bayi, Stroller, Mainan Edukasi",
     },
     { 
       name: "Otomotif & Aksesori", 
       icon: <CarIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1611016186353-9af58c69a533?w=800&auto=format&fit=crop&q=80",
+      url: Sepeda,
       description: "Sepeda Motor, Helm, Suku Cadang",
     },
     { 
-      name: "Perlengkapan Taman", 
+      name: "Perlengkapan Taman & Outdoor", 
       icon: <FlowerIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1536236113879-8c9f71a3af37?w=800&auto=format&fit=crop&q=80",
+      url: Tenda,
       description: "Peralatan Berkebun, Meja Taman, Tenda",
     },
     { 
-      name: "Peralatan Kantor", 
+      name: "Peralatan Kantor & Industri", 
       icon: <PrinterIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=800&auto=format&fit=crop&q=80",
+      url: Printer,
       description: "Meja Kantor, Printer, Alat Teknik",
     },
     { 
-      name: "Kosmetik & Perawatan", 
+      name: "Kosmetik & Perawatan Diri", 
       icon: <SparklesIcon className="w-5 h-5" />, 
-      url: "https://images.unsplash.com/photo-1583241819429-a1aaef8c582a?w=800&auto=format&fit=crop&q=80",
+      url: BoxMakeup,
       description: "Alat Kecantikan, Parfum, Aksesori Makeup",
     },
   ];
@@ -81,7 +94,7 @@ const itemsData = [
 
 const ctaCard = {
   name: "Lihat Semua Produk di ReuseMart!",
-  url: "https://images.unsplash.com/photo-1605371924599-2d0365da1ae0?w=800&auto=format&fit=crop&q=80",
+  url: Hero,
   description: "Temukan berbagai barang bekas berkualitas dengan harga terjangkau.",
   cta: true,
 };
@@ -120,9 +133,9 @@ export default function CategoryGallery() {
   };
 
   return (
-    <section className="py-12 px-16 bg-gray-50" id="category-gallery" ref={ref}>
-      <div className="max-w-6xl mx-auto mb-8">
-        <h2 className="text-3xl font-bold text-center mb-2">Kategori Barang Bekas ReuseMart</h2>
+    <section className="py-12 px-16 bg-white" id="category-gallery" ref={ref}>
+      <div className="max-w-6xl mx-auto mb-12">
+        <h2 className="text-4xl font-bold text-olive-500 text-center mb-2">Kategori Barang Bekas ReuseMart</h2>
         <p className="text-gray-600 text-center">Temukan berbagai pilihan barang bekas berkualitas</p>
       </div>
 

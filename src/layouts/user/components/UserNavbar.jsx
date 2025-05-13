@@ -1,3 +1,4 @@
+// Versi lengkap dengan warna putih sebelum scroll, hitam setelah scroll
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -18,32 +19,35 @@ const UserNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check authentication status
+  const isHomePage = location.pathname === "/";
+
+  useEffect(() => {
+    if (isHomePage) {
+      const handleScroll = () => {
+        setScrolled(window.scrollY > 10);
+      };
+      window.addEventListener("scroll", handleScroll);
+      handleScroll();
+      return () => window.removeEventListener("scroll", handleScroll);
+    } else {
+      setScrolled(true);
+    }
+  }, [isHomePage]);
+
   useEffect(() => {
     const checkAuth = () => {
       const authStatus = AuthService.isAuthenticated();
       setIsLoggedIn(authStatus);
-
-      if (authStatus) {
-        setUserData(AuthService.getCurrentUser());
-      } else {
-        setUserData(null);
-      }
+      setUserData(authStatus ? AuthService.getCurrentUser() : null);
     };
-
-    // Check on component mount
     checkAuth();
-
-    // Setup listener for localStorage changes
     const handleStorageChange = () => checkAuth();
     window.addEventListener("storage", handleStorageChange);
-
-    // Add custom event for auth changes
     window.addEventListener("authChange", handleStorageChange);
-
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("authChange", handleStorageChange);
@@ -53,164 +57,109 @@ const UserNavbar = () => {
   const isActive = (path) => location.pathname === path;
 
   const linkClasses = (path) =>
-    `px-3 py-2 rounded-md text-xl font-medium transition duration-150 flex items-center ${
+    `px-3 py-2 rounded-md  text-mdfont-medium transition duration-150 flex items-center ${
       isActive(path)
-        ? "text-stone-500 bg-gray-100"
-        : "text-gray-700 hover:text-stone-500 hover:bg-gray-100"
+        ? scrolled
+          ? "text-olive-500 bg-olive-300"
+          : "text-white bg-white/20"
+        : scrolled
+        ? "text-black hover:text-olive-500 hover:bg-olive-100"
+        : "text-white hover:text-olive-200 hover:bg-white/10"
     }`;
 
   const handleLogout = () => {
     AuthService.logout();
-    // Dispatch a custom event to inform other components about the auth change
     window.dispatchEvent(new Event("authChange"));
     navigate("/");
   };
 
-  const getInitials = (name) => {
-    if (!name) return "US";
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .toUpperCase()
-      .substring(0, 2);
-  };
+  const getInitials = (name) =>
+    name ? name.split(" ").map((n) => n[0]).join("").toUpperCase().substring(0, 2) : "US";
 
   return (
     <nav className="fixed top-0 z-50 px-4 sm:px-6 lg:px-16 w-full">
-      <div className="bg-white w-full rounded-b-2xl px-4">
-        <div className="flex justify-between h-24">
+      <div className={`w-full px-4 transition-all duration-300 ${
+        scrolled || !isHomePage ? "bg-white shadow-md rounded-b-2xl" : "bg-transparent"
+      }`}>
+        <div className="flex justify-between h-20">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <img
-                className="h-8 w-8"
-                src="/src/assets/logo.png"
-                alt="ReuseMart"
-              />
-              <span className="ml-2 text-2xl font-bold text-stone-500">
+              <img className="h-8 w-8" src="/src/assets/logo.png" alt="ReuseMart" />
+              <span className={`ml-2 text-xl font-bold transition-colors duration-300 ${
+                scrolled ? "text-black" : "text-white"
+              }`}>
                 ReuseMart
               </span>
             </div>
-            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
-              <Link to="/" className={linkClasses("/")}>
-                <Home className="mr-1 h-4 w-4" />
-                Home
-              </Link>
-              <Link to="/catalogue" className={linkClasses("/catalogue")}>
-                <Package className="mr-1 h-4 w-4" />
-                Products
-              </Link>
-              <Link to="/about" className={linkClasses("/about")}>
-                <Info className="mr-1 h-4 w-4" />
-                About Us
-              </Link>
+            <div className="hidden md:ml-6 md:flex md:items-center md:space-x-5 text-sm">
+              <Link to="/" className={linkClasses("/")}> <Home className="mr-1 h-4 w-4" /> Home </Link>
+              <Link to="/catalogue" className={linkClasses("/catalogue")}> <Package className="mr-1 h-4 w-4" /> Products </Link>
+              <Link to="/about" className={linkClasses("/about")}> <Info className="mr-1 h-4 w-4" /> About Us </Link>
             </div>
           </div>
-          <div className="relative flex items-center w-full max-w-4xl">
+
+          <div className="relative flex items-center w-full max-w-md text-sm">
             <input
               type="text"
               placeholder="Search..."
-              className="w-full px-5 py-3 text-gray-700 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-500 text-lg"
+              className={`w-full px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-500 transition-colors duration-300 ${
+                scrolled ? "bg-olive-300 text-olive-500" : "border border-white text-white"
+              }`}
             />
-            <button className="absolute right-4 top-1/2 transform -translate-y-1/2 text-stone-500">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-7 w-7"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35M16.65 10.65a6 6 0 11-12 0 6 6 0 0112 0z"
-                />
+            <button className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors duration-300 ${
+              scrolled ? "text-olive-500" : "text-white"
+            }`}>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M16.65 10.65a6 6 0 11-12 0 6 6 0 0112 0z" />
               </svg>
             </button>
           </div>
 
-          {/* Right side buttons */}
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center md:space-x-1 text-sm">
             {isLoggedIn ? (
               <>
-                0{/* Cart Icon */}
-                <Link
-                  to="/cart"
-                  className="p-2 rounded-full text-gray-600 hover:text-stone-500 hover:bg-gray-100 relative"
-                >
-                  <ShoppingCart className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                    3
-                  </span>
+                <Link to="/cart" className={`p-2 rounded-full transition-colors duration-300 ${scrolled ? "text-black hover:text-stone-500" : "text-white hover:text-gray-200"} hover:bg-gray-100 relative`}>
+                  <ShoppingCart className="h-5 w-5" />
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">3</span>
                 </Link>
-                {/* Notification Icon */}
-                <Link
-                  to="/notifications"
-                  className="ml-4 p-2 rounded-full text-gray-600 hover:text-stone-500 hover:bg-gray-100 relative"
-                >
-                  <Bell className="h-6 w-6" />
-                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-                    2
-                  </span>
+                <Link to="/notifications" className={`ml-4 p-2 rounded-full transition-colors duration-300 ${scrolled ? "text-black hover:text-stone-500" : "text-white hover:text-gray-200"} hover:bg-gray-100 relative`}>
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">2</span>
                 </Link>
-                {/* Avatar */}
                 <Link to="/profile" className="ml-4">
-                  <div className="h-8 w-8 rounded-full bg-stone-500 flex items-center justify-center text-white font-semibold">
+                  <div className="h-8 w-8 rounded-full bg-stone-500 flex items-center justify-center text-white font-semibold text-sm">
                     {userData ? getInitials(userData.nama) : "US"}
                   </div>
                 </Link>
-                {/* Logout button */}
-                <button
-                  onClick={handleLogout}
-                  className="ml-4 px-4 py-2 text-xl font-medium text-red-600 rounded-md hover:bg-red-50 hover:text-red-700 flex items-center"
-                >
-                  <LogOut className="mr-1 h-4 w-4" />
-                  Logout
+                <button onClick={handleLogout} className="ml-4 px-4 py-2 text-sm font-medium text-red-600 rounded-md hover:bg-red-50 hover:text-red-700 flex items-center">
+                  <LogOut className="mr-1 h-4 w-4" /> Logout
                 </button>
               </>
             ) : (
               <>
-                {/* Login Button */}
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-xl font-medium text-stone-500 rounded-md hover:bg-gray-100 hover:text-stone-700 flex items-center"
-                >
-                  <LogIn className="mr-1 h-4 w-4" />
-                  Login
+                <Link to="/login" className={`px-4 py-2 text-sm font-medium rounded-md flex items-center transition-colors duration-300 ${scrolled ? "text-black hover:text-stone-700 hover:bg-olive-100" : "text-white hover:bg-olive-300/30"}`}>
+                  <LogIn className="mr-1 h-4 w-4" /> Login
                 </Link>
-
-                {/* Register Button */}
-                <Link
-                  to="/register-selection"
-                  className="ml-3 px-4 py-2 text-xl font-medium text-white bg-stone-500 rounded-md hover:bg-stone-700 flex items-center"
-                >
-                  <UserPlus className="mr-1 h-4 w-4" />
-                  Register
+                <Link to="/register-selection" className={`ml-3 px-4 py-2 text-sm font-medium rounded-md flex items-center transition-colors duration-300 ${scrolled ? "bg-olive-500 text-white hover:bg-olive-900" : "bg-olive-300/20 bg-opacity-20 text-white hover:bg-opacity-100"}`}>
+                  <UserPlus className="mr-1 h-4 w-4" /> Register
                 </Link>
               </>
             )}
           </div>
 
-          {/* Mobile menu button */}
           <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-stone-500 hover:bg-gray-100 focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className={`inline-flex items-center justify-center p-2 rounded-md transition-colors duration-300 ${scrolled ? "text-black" : "text-white"} hover:text-stone-500 hover:bg-gray-100`}>
+              {isMenuOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* mobile */}
       <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t">
+        <div className={`px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t ${
+          scrolled || !isHomePage ? "bg-white shadow-md" : "bg-white bg-opacity-95"
+        }`}>
           <Link
             to="/"
             className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-stone-500 hover:bg-gray-100"

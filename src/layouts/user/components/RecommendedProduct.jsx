@@ -88,7 +88,7 @@ export default function RecommendedProducts() {
           <img
             src={product.image}
             alt={product.name || "Product"}
-            className="h-64 w-full object-cover rounded-lg"
+            className=" object-cover w-72 h-52 rounded-lg"
           />
         </div>
         <div className="pt-4">
@@ -173,7 +173,7 @@ export default function RecommendedProducts() {
             {products.slice(0, 10).map((product) => (
               <div
                 key={product.id}
-                className="flex-shrink-0 w-64 h-auto rounded-lg mb-10"
+                className="flex-shrink-0 h-80 w-full rounded-lg mb-10"
               >
                 <ProductCard product={product} />
               </div>

@@ -88,13 +88,8 @@ export default function Catalogue() {
     const fetchProducts = async () => {
       try {
         const productsResponse = await axios.get(`${API_URL}/products`);
-        const productsWithImages = productsResponse.data.data.map(
-          (product, index) => ({
-            ...product,
-            image: dummyImages[index % dummyImages.length], // Cycle through dummy images
-          })
-        );
-        setProducts(productsWithImages);
+        // Use the image field directly from the API response
+        setProducts(productsResponse.data.data);
       } catch (err) {
         console.error("Error fetching products:", err);
         setProductsError("Failed to load products. Please try again later.");
@@ -166,9 +161,8 @@ export default function Catalogue() {
   const ProductCard = ({ product }) => {
     const userType = AuthService.getUserType() || "";
     const isAuthenticated = AuthService.isAuthenticated();
-    const showAddToCart = userType !== "penitip"; // Hide for penitip
     const isPembeli = userType === "pembeli";
-
+  
     return (
       <div
         className="bg-white rounded-xl hover:shadow-xl overflow-hidden cursor-pointer hover:-translate-y-1 p-4 transition duration-300"
@@ -176,38 +170,37 @@ export default function Catalogue() {
       >
         <div className="flex justify-center">
           <img
-            src={product.image}
+            src={product.image || "/api/placeholder/60/60"}
             alt={product.name || "Product"}
             className="h-64 w-full object-cover rounded-lg"
+            onError={(e) => (e.target.src = "/api/placeholder/60/60")} // Fallback for broken images
           />
         </div>
-        <div className="pt-4">
+        <div className="pt-2">
           <h3 className="text-lg font-semibold">
             {product.name || "Unknown Product"}
           </h3>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs text-gray-400">
             {product.subcategory || "Unknown"}
           </p>
           <div className="flex justify-between items-center mt-2">
             <span className="font-bold text-2xl text-stone-800">
-              ${product.price ? product.price.toFixed(2) : "N/A"}
+              Rp {product.price ? product.price.toLocaleString("id-ID") : "N/A"}
             </span>
-            {showAddToCart && (
+            {userType !== "penitip" && (
               <div className="relative flex space-x-2">
                 <button
                   className={`px-2 py-1 rounded text-sm ${
                     isPembeli
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-stone-600 text-white hover:bg-stone-700"
+                      ? "bg-gray-300 text-gray-500"
+                      : "bg-stone-600 text-white hover:bg-stone-700 cursor-not-allowed"
                   }`}
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent navigating to detail page
+                    e.stopPropagation();
                     handleAddToCart();
                   }}
                   disabled={isPembeli}
-                  title={
-                    isPembeli ? "Cart functionality coming soon" : "Add to Cart"
-                  }
+                  title={isPembeli ? "Cart functionality coming soon" : "Add to Cart"}
                 >
                   Add to Cart
                 </button>
@@ -225,7 +218,7 @@ export default function Catalogue() {
     return (
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
-          <h3 className="text-3xl font-medium mb-4">Applied Filters</h3>
+          <h3 className="text-3xl font-medium text-olive-500 mb-4">Applied Filters</h3>
           <button
             className="text-sm text-blue-600 hover:text-blue-800"
             onClick={clearAllFilters}
@@ -256,11 +249,11 @@ export default function Catalogue() {
   return (
     <div className="">
       {/* Hero Section */}
-      <div className="relative h-96 w-full bg-[url('/src/assets/hero-bg.jpg')] bg-cover bg-no-repeat bg-center overflow-hidden">
-        <div className="absolute inset-0 flex-row items-center bg-gradient-to-t from-stone-900/90 to-stone-700/40">
+      <div className="relative h-96 w-full bg-[url('/src/assets/hero-bg.png')] bg-cover bg-no-repeat bg-center overflow-hidden">
+        <div className="absolute inset-0 flex-row items-center bg-gradient-to-t from-olive-900/90 to-olive-500/40">
           <div>
             <h1 className="mt-60 text-9xl justify-center text-center font-bold text-white">
-              Catalog Produk
+              Katalog Produk
             </h1>
           </div>
         </div>
@@ -270,12 +263,12 @@ export default function Catalogue() {
       <div className="flex flex-col mx-16 -mt-12 z-10 relative bg-white rounded-2xl p-5">
         <div className="flex gap-9">
           {/* Sidebar */}
-          <div className="w-72 flex-shrink-0">
+          <div className="w-64 flex-shrink-0">
             <AppliedFilters
               selectedSubcategories={selectedSubcategories}
               clearAllFilters={clearAllFilters}
             />
-            <h2 className="font-medium mb-4 mt-8 text-3xl">Category</h2>
+            <h2 className="font-medium mb-4 text-3xl text-olive-500">Category</h2>
             {loading ? (
               <div className="flex justify-center py-4">
                 <svg
@@ -302,9 +295,9 @@ export default function Catalogue() {
             ) : error ? (
               <div className="text-red-500 py-4">{error}</div>
             ) : (
-              <ul className="space-y-4">
+              <ul className="space-y-5">
                 {categories.map((category) => (
-                  <li key={category.id} className="text-md">
+                  <li key={category.id} className="text-sm">
                     <div
                       className="flex items-center justify-between py-2 cursor-pointer hover:bg-gray-50"
                       onClick={() => toggleCategory(category.id)}
@@ -313,7 +306,7 @@ export default function Catalogue() {
                         <span className="mr-3 text-gray-600">
                           {category.icon}
                         </span>
-                        <span className="font-medium">{category.name}</span>
+                        <span className="font-medium mr-2">{category.name}</span>
                       </div>
                       {openCategoryId === category.id ? (
                         <ChevronUp size={20} />
@@ -350,7 +343,7 @@ export default function Catalogue() {
             {productsError && (
               <div className="text-red-500 py-4">{productsError}</div>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-2 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-2 mb-8">
               {paginatedProducts.length ? (
                 paginatedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
@@ -379,8 +372,8 @@ export default function Catalogue() {
                       key={page}
                       className={`w-10 h-10 flex items-center justify-center rounded ${
                         activePage === page
-                          ? "bg-black text-white"
-                          : "text-gray-600 hover:bg-gray-100"
+                          ? "bg-olive-900 text-white"
+                          : "text-olive-500 hover:bg-olive-900"
                       }`}
                       onClick={() => setActivePage(page)}
                     >

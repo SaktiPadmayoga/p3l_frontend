@@ -8,3 +8,12 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  @theme {
+    --color-olive-500: #77784a;
+    --color-olive-300: #f2f2e6;
+    --color-olive-100: #f9faf7; 
+    --color-olive-900: #373323;
+
+  }
+  

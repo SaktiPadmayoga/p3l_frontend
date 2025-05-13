@@ -1,11 +1,9 @@
-
 import React, { useEffect, useState } from "react";
 import { User, Home, ShoppingBag, Bell, Package } from "lucide-react";
 import AddressManagement from "../components/ManageAddress";
 import HistoryPembelian from "../components/HistoryPembelian";
-import HistoryPenitipan from "../components/HistoryPenitipan";
+import HistoryPenitipan from "../components/HistoryPenjualan";
 import axios from "axios";
-
 
 export default function Profile() {
   const [activeTab, setActiveTab] = useState("profile");
@@ -88,13 +86,15 @@ export default function Profile() {
             onClick={() => setActiveTab("profile")}
           />
 
-          <SidebarItem
-            icon={<Home size={24} />}
-            text="Address"
-            active={activeTab === "address"}
-            onClick={() => setActiveTab("address")}
+          {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
+            <SidebarItem
+              icon={<Home size={24} />}
+              text="Address"
+              active={activeTab === "address"}
+              onClick={() => setActiveTab("address")}
+            />
+          )}
 
-          />
           {hasRole("pembeli") && hasPermission("view-history-pembelian") && (
             <SidebarItem
               icon={<ShoppingBag size={24} />}
@@ -122,7 +122,6 @@ export default function Profile() {
 
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-auto">
-
         {activeTab === "profile" && <ProfilePage />}
         {activeTab === "address" && <AddressPage />}
         {activeTab === "pembelian" && <HistoryPembelian />}
@@ -130,7 +129,6 @@ export default function Profile() {
         {activeTab === "notifications" && (
           <PlaceholderPage title="Notifications" />
         )}
-
       </div>
     </div>
   );
@@ -226,21 +224,20 @@ function ProfilePage() {
         <ProfileItem label="Tipe Pengguna" value={user_type} />
         <ProfileItem label="ID Pengguna" value={user.id} />
 
-        <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
+        {user_type !== "organisasi" && (
+          <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
+        )}
         <ProfileItem label="Role" value={user.role.join(", ")} />
+        {user_type === "penitip" && (
+          <ProfileItem label="Saldo" value={user.saldo} />
+        )}
         {user_type === "organisasi" && (
-
           <>
             <ProfileItem label="Alamat" value={user.alamat} />
             <ProfileItem label="Telepon" value={user.telepon} />
             <ProfileItem label="Deskripsi" value={user.deskripsi} />
           </>
         )}
-
-        {user_type !== "organisasi" && (
-          <ProfileItem label="Poin Loyalitas" value={user.poin ?? "-"} />
-        )}
-
       </div>
 
       <div className="mt-10 text-right">
@@ -268,7 +265,6 @@ function AddressPage() {
     </div>
   );
 }
-
 
 function PlaceholderPage({ title }) {
   return (

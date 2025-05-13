@@ -93,7 +93,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   return (
     <div
-      className={`bg-white text-black transition-all duration-300 fixed h-full z-50 ${
+      className={`bg-olive-100 text-black transition-all duration-300 fixed h-full z-50 ${
         sidebarOpen ? "w-64" : "sm:w-20 w-64"
       } ${sidebarOpen ? "left-0" : "sm:left-0 -left-full"}`}
     >
@@ -107,7 +107,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="sm:block hidden">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-stone-600 hover:text-white"
+            className="p-2 rounded-lg hover:bg-olive-500 hover:text-white"
           >
             {sidebarOpen ? <PanelLeftClose size={20} /> : <Menu size={20} />}
           </button>
@@ -115,7 +115,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="sm:hidden block">
           <button
             onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-lg hover:bg-stone-600 hover:text-white"
+            className="p-2 rounded-lg hover:bg-olive-500 hover:text-white"
           >
             <PanelLeftClose size={20} />
           </button>
@@ -151,7 +151,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             expanded={sidebarOpen || window.innerWidth < 640}
           />
         )}
-        {hasRole("cs") && hasPermission("manage-diskusi") && (
+        {hasRole("cs") && (
           <SidebarItem
             icon={<UserPlus />}
             text="Manage Diskusi"

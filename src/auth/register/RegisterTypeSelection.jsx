@@ -1,84 +1,52 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { UserCircle, Building } from "lucide-react";
-import bg from "../../assets/BgFix.png";
+import HeroBg from "../../assets/hero-bg.png";
 
 const RegisterTypeSelection = () => {
   return (
-    <div
-      className="flex items-center justify-center bg-cover bg-center bg-no-repeat min-h-screen"
-      // style={{ backgroundImage: `url(${bg})` }}
-    >
-      <div className="rounded-xl overflow-hidden flex flex-col max-w-5xl w-full mx-4 md:h-[90vh] shadow-2xl bg-white/60">
-        {/* Logo Section */}
-        <div className="flex flex-col items-center justify-center p-10 text-center">
-          <img
-            src="src/assets/logo.png"
-            alt="Logo"
-            className="w-32 object-contain"
-          />
-          <h1 className="text-3xl font-bold text-stone-800 mt-6">
-            Pilih Jenis Akun
-          </h1>
-          <p className="text-lg text-gray-600 mt-2">
-            Silakan pilih jenis akun yang ingin Anda daftarkan
-          </p>
-        </div>
+    <div className="min-h-screen bg-[url('/src/assets/hero-bg.png')] bg-center bg-cover flex items-center justify-center px-20 py-10 relative">
+      <div className="absolute inset-0 bg-gradient-to-r from-olive-500/80 to-olive-500/80"></div>
+      <div className="bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row w-full relative p-6 md:p-10 md:min-h-[85vh]">
+        
+        {/* Left Side - Selection Form */}
+        <div className="w-full md:w-2/5 flex flex-col justify-center items-center">
+          <img src="src/assets/logo.png" alt="Logo" className="h-12 w-12 mb-4" />
 
-        {/* Selection Cards */}
-        <div className="flex flex-col md:flex-row gap-6 p-8 justify-center">
-          {/* Individual User Card */}
-          <Link
-            to="/register"
-            className="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full md:w-1/2 border border-gray-200 hover:border-stone-500"
-          >
-            <div className="p-4 bg-stone-100 rounded-full mb-4">
-              <UserCircle size={64} className="text-stone-600" />
-            </div>
-            <h2 className="text-2xl font-semibold text-stone-800 mb-2">
-              Pembeli
-            </h2>
-            <p className="text-center text-gray-600">
-              Daftar sebagai pembeli untuk mengakses katalog produk dan
-              melakukan pembelian
-            </p>
-            <button className="mt-6 px-6 py-2 bg-stone-600 text-white rounded-lg hover:bg-stone-700 transition-colors">
-              Daftar sebagai Pembeli
-            </button>
-          </Link>
-
-          {/* Organization Card */}
-          <Link
-            to="/register-organisasi"
-            className="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full md:w-1/2 border border-gray-200 hover:border-stone-500"
-          >
-            <div className="p-4 bg-stone-100 rounded-full mb-4">
-              <Building size={64} className="text-stone-600" />
-            </div>
-            <h2 className="text-2xl font-semibold text-stone-800 mb-2">
-              Organisasi
-            </h2>
-            <p className="text-center text-gray-600">
-              Daftar sebagai organisasi untuk menyediakan produk dan mengajukan
-              permintaan donasi
-            </p>
-            <button className="mt-6 px-6 py-2 bg-stone-600 text-white rounded-lg hover:bg-stone-700 transition-colors">
-              Daftar sebagai Organisasi
-            </button>
-          </Link>
-        </div>
-
-        {/* Login Link */}
-        <div className="text-center pb-8">
-          <p className="text-gray-600">
-            Sudah memiliki akun?{" "}
-            <Link
-              to="/login"
-              className="text-stone-600 font-medium hover:underline"
-            >
-              Masuk sekarang
+          <p className="text-olive-900 text-xl text-center mb-6">Pilih Jenis Akun</p>
+          
+          <div className="flex flex-col gap-4 w-full max-w-sm">
+            {/* Pembeli */}
+            <Link to="/register" className="flex flex-col items-center p-4 bg-white rounded-xl border border-olive-500 hover:border-olive-900 transition shadow-sm">
+              <div className="p-2 bg-olive-100 rounded-full mb-2">
+                <UserCircle size={36} className="text-olive-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-olive-900 mb-1">Pembeli</h2>
+              <p className="text-center text-sm text-olive-800">Akses katalog produk & lakukan pembelian</p>
+              <button className="mt-3 w-full bg-olive-500 text-white py-2 rounded-lg hover:bg-olive-900">Daftar sebagai Pembeli</button>
             </Link>
-          </p>
+
+            {/* Organisasi */}
+            <Link to="/register-organisasi" className="flex flex-col items-center p-4 bg-white rounded-xl border border-olive-500 hover:border-olive-900 transition shadow-sm">
+              <div className="p-2 bg-olive-100 rounded-full mb-2">
+                <Building size={36} className="text-olive-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-olive-900 mb-1">Organisasi</h2>
+              <p className="text-center text-sm text-olive-800">Sediakan produk & ajukan donasi</p>
+              <button className="mt-3 w-full bg-olive-500 text-white py-2 rounded-lg hover:bg-olive-900">Daftar sebagai Organisasi</button>
+            </Link>
+          </div>
+
+          <div className="text-center mt-5 text-sm">
+            Sudah punya akun?{" "}
+            <Link to="/login" className="text-olive-500 font-semibold hover:underline">Masuk</Link>
+          </div>
+        </div>
+
+        {/* Right Side - Image */}
+        <div className="hidden md:block md:w-3/5 relative rounded-2xl overflow-hidden ml-6">
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-white/0"></div>
+          <img src={HeroBg} alt="Hero" className="object-cover w-full h-full rounded-2xl" />
         </div>
       </div>
     </div>

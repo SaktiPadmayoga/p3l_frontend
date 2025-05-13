@@ -10,11 +10,10 @@ const API_URL = "http://localhost:8000/api";
 
 // Dummy images
 const dummyImages = [
-  "/src/assets/hero-bg.jpg",
   "/src/assets/tenda.webp",
   "/src/assets/tenda1.webp",
   "/src/assets/tenda2.webp",
-  "/src/assets/tenda3.webp",
+  
 ];
 
 const DetailProduct = () => {
@@ -152,12 +151,7 @@ const DetailProduct = () => {
       setComment("");
 
       // Scroll to the new comment
-      setTimeout(() => {
-        window.scrollTo({
-          top: document.body.scrollHeight,
-          behavior: "smooth",
-        });
-      }, 100);
+      
     } catch (err) {
       console.error("Error posting discussion:", err);
       if (err.response?.data?.error) {
@@ -217,22 +211,22 @@ const DetailProduct = () => {
       <div className="pl-16 pb-8">
         <Link
           to="/catalogue"
-          className="underline text-stone-700 text-xl hover:text-stone-900"
+          className="underline text-stone-700 text-md hover:text-stone-900"
         >
           Produk &gt; {product.category || "Kategori"} &gt;{" "}
           {product.name || "Produk"}
         </Link>
       </div>
 
-      <div className="BASIC-MEDIUM grid grid-cols-12 mx-16 mt-5">
+      <div className=" grid grid-cols-12 mx-16">
         {/* Kolom kiri - gambar dan diskusi */}
         <div className="col-span-7 mr-4">
-          <div className="grid grid-cols-12 gap-2">
+          <div className="grid grid-cols-12 gap-2 ">
             <div className="grid grid-rows-3 col-span-3 gap-4">
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className="rounded-lg overflow-hidden cursor-pointer hover:shadow-lg justify-center items-center flex h-full"
+                  className="rounded-lg overflow-hidden cursor-pointer hover:shadow-lg justify-center items-center h-full flex "
                   onClick={() => changeMainImage(image)}
                 >
                   <img
@@ -251,7 +245,7 @@ const DetailProduct = () => {
               />
             </div>
           </div>
-          <h2 className="text-3xl font-semibold my-6">Diskusi Produk</h2>
+          <h2 className="text-2xl font-semibold my-6">Diskusi Produk</h2>
 
           {/* Comment input - only visible for logged-in pembeli */}
           {isAuthenticated && userType === "pembeli" && (
@@ -260,7 +254,7 @@ const DetailProduct = () => {
                 <img
                   src="/api/placeholder/40/40"
                   alt="User Avatar"
-                  className="w-10 h-10 rounded-full"
+                  className="w-6 h-6 rounded-full"
                 />
                 <div className="relative flex-1">
                   <input
@@ -270,20 +264,20 @@ const DetailProduct = () => {
                     placeholder="Write a comment..."
                     className={`w-full border ${
                       commentError ? "border-red-500" : "border-gray-200"
-                    } rounded-full px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-transparent text-xl`}
+                    } rounded-2xl px-4 py-2 pr-12 text-md focus:outline-none focus:ring-2 focus:ring-stone-500 focus:border-transparent`}
                   />
                 </div>
                 <button
                   onClick={handleSubmit}
                   disabled={!comment.trim() || submittingComment}
-                  className="bg-stone-600 hover:bg-stone-700 text-white px-5 py-3 rounded-full flex items-center gap-2 transition-colors disabled:bg-stone-300"
+                  className="bg-olive-500 hover:bg-olive-900 text-white px-5 py-2 rounded-full flex items-center gap-2 transition-colors disabled:bg-stone-300"
                 >
                   {submittingComment ? (
                     <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
                   ) : (
                     <Send size={18} />
                   )}
-                  <span className="hidden sm:inline text-lg">Send</span>
+                  <span className="hidden sm:inline text-md">Send</span>
                 </button>
               </div>
 
@@ -315,12 +309,12 @@ const DetailProduct = () => {
           {/* Comment counter */}
           <div className="flex items-center justify-between mb-6">
             <div className="text-gray-500 font-medium">
-              <span className="text-gray-900 font-semibold text-xl">
+              <span className="text-gray-900 font-semibold text-lg">
                 {discussions.length} Comments
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <select className="border rounded-lg px-3 py-2 bg-gray-50 text-gray-700 text-lg">
+              <select className="border rounded-lg px-2 py-1 bg-gray-50 text-gray-700 text-md">
                 <option>Most Recent</option>
                 <option>Oldest</option>
               </select>
@@ -329,7 +323,7 @@ const DetailProduct = () => {
 
           {/* Comments list */}
           {discussions.length > 0 ? (
-            <div className="space-y-6">
+            <div className="space-y-6 ml-4">
               {discussions.map((discussion) => (
                 <div
                   key={discussion.ID_DISKUSI}
@@ -344,17 +338,17 @@ const DetailProduct = () => {
                         discussion.pembeli?.NAMA ||
                         "User"
                       }
-                      className="w-12 h-12 rounded-full"
+                      className="w-6 h-6 rounded-full"
                     />
                     <div className="flex-1">
                       {/* Comment header */}
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-gray-900 text-xl">
+                        <span className="font-semibold text-gray-900 text-sm">
                           {discussion.pegawai?.NAMA ||
                             discussion.pembeli?.NAMA ||
                             "Anonymous"}
                         </span>
-                        <span className="text-lg text-gray-500">
+                        <span className="text-sm text-gray-500">
                           {new Date(discussion.TANGGAL_DIBUAT).toLocaleString(
                             "id-ID",
                             {
@@ -369,7 +363,7 @@ const DetailProduct = () => {
                       </div>
 
                       {/* Comment content */}
-                      <p className="text-gray-700 mb-3 text-xl">
+                      <p className="text-gray-700 mb-3 text-lg">
                         {discussion.PESAN}
                       </p>
 
@@ -446,7 +440,7 @@ const DetailProduct = () => {
           >
             <div className="py-4">
               <div className="flex w-auto">
-                <div className="py-2 px-3 mr-2 bg-stone-200 rounded-2xl">
+                <div className="py-2 px-3 mr-2 bg-olive-300 text-olive-500 rounded-2xl">
                   {product.category || "Kategori"}
                 </div>
               </div>
@@ -476,10 +470,10 @@ const DetailProduct = () => {
               </p>
 
               <div className="flex w-full mt-10 text-center">
-                <button className="py-2 px-3 mr-2 border-2 border-stone-600 rounded-lg w-full">
+                <button className="py-2 px-3 mr-2 border-2 border-olive-500 rounded-lg w-full">
                   Keranjang
                 </button>
-                <button className="py-2 px-3 mr-2 bg-stone-600 text-white rounded-lg w-full">
+                <button className="py-2 px-3 mr-2 bg-olive-500 text-white rounded-lg w-full">
                   Beli Sekarang
                 </button>
               </div>

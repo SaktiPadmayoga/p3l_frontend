@@ -28,7 +28,7 @@ import DaftarRequestDonasi from "./layouts/Administrator/pages/DaftarRequestDona
 import HistoryDonasi from "./layouts/Administrator/pages/HistoryDonasi";
 import ManageBarangTitipan from "./layouts/Administrator/pages/ManageBarangTitipan";
 import ManageTransaksiPenitipan from "./layouts/Administrator/pages/ManageTransaksiPenitipan";
-import ManageDiskusiBarang from "./layouts/administrator/pages/ManageDiskusiBarang";
+import ManageDiskusiBarang from "./layouts/Administrator/pages/ManageDiskusiBarang";
 import DashboardContent from "./layouts/Administrator/pages/DashboardContent";
 import AuthService from "./services/authService";
 

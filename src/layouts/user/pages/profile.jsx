@@ -174,14 +174,8 @@ function ProfilePage() {
 
         setUserData(response.data);
 
-        // Update localStorage with fresh user data
-        localStorage.setItem(
-          "userData",
-          JSON.stringify({
-            role: response.data.user.role || [],
-            permissions: response.data.user.permissions || [],
-          })
-        );
+        // ✅ Update seluruh userData agar tidak kehilangan 'nama' dan lainnya
+        localStorage.setItem("userData", JSON.stringify(response.data.user));
         localStorage.setItem("userType", response.data.user_type || "");
       } catch (error) {
         console.error("Gagal mengambil data profil:", error);
@@ -248,6 +242,7 @@ function ProfilePage() {
     </div>
   );
 }
+
 
 function ProfileItem({ label, value }) {
   return (

@@ -28,7 +28,9 @@ const ManageDiskusiProduk = () => {
       const response = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("Fetched discussions:", response.data); // Debug log
       setDiscussions(response.data);
+      setError("");
     } catch (err) {
       setError(
         err.response?.data?.error ||
@@ -57,31 +59,31 @@ const ManageDiskusiProduk = () => {
 
   const filteredDiscussions = discussions
     .filter((d) => {
-      // Filter by search term (message content or product name)
-      const searchMatch = d.PESAN_DISKUSI.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         d.NAMA_PRODUK.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // Filter by product name
-      const productMatch = productFilter === "" || 
-                          d.NAMA_PRODUK.toLowerCase().includes(productFilter.toLowerCase());
-      
-      // Filter by status
-      const statusMatch = statusFilter === "all" || 
-                         (statusFilter === "replied" && d.STATUS_BALASAN === "Sudah Dibalas") ||
-                         (statusFilter === "notReplied" && d.STATUS_BALASAN === "Belum Dibalas");
-      
+      const searchMatch =
+        (d.PESAN_DISKUSI || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (d.NAMA_PRODUK || "").toLowerCase().includes(searchTerm.toLowerCase());
+      const productMatch =
+        productFilter === "" ||
+        (d.NAMA_PRODUK || "")
+          .toLowerCase()
+          .includes(productFilter.toLowerCase());
+      const statusMatch =
+        statusFilter === "all" ||
+        (statusFilter === "replied" && d.STATUS_BALASAN === "Sudah Dibalas") ||
+        (statusFilter === "notReplied" && d.STATUS_BALASAN === "Belum Dibalas");
       return searchMatch && productMatch && statusMatch;
     })
     .sort((a, b) => {
-      // Sort discussions
       if (sortBy === "newest") {
         return new Date(b.TANGGAL_DISKUSI) - new Date(a.TANGGAL_DISKUSI);
       } else if (sortBy === "oldest") {
         return new Date(a.TANGGAL_DISKUSI) - new Date(b.TANGGAL_DISKUSI);
       } else if (sortBy === "productName") {
-        return a.NAMA_PRODUK.localeCompare(b.NAMA_PRODUK);
+        return (a.NAMA_PRODUK || "").localeCompare(b.NAMA_PRODUK || "");
       } else if (sortBy === "status") {
-        return a.STATUS_BALASAN.localeCompare(b.STATUS_BALASAN);
+        return (a.STATUS_BALASAN || "").localeCompare(b.STATUS_BALASAN || "");
       }
       return 0;
     });
@@ -97,13 +99,18 @@ const ManageDiskusiProduk = () => {
   };
 
   const handleSubmitReply = async () => {
+    if (!replyText.trim()) {
+      setError("Reply cannot be empty");
+      return;
+    }
+
     try {
       const payload = {
         BALASAN: replyText,
-        TANGGAL_BALASAN: new Date().toISOString().split('T')[0],
+        TANGGAL_BALASAN: new Date().toISOString().split("T")[0],
         ID_CS: user.id,
       };
-      
+
       const response = await axios.put(
         `${API_URL}/${currentDiscussionId}/reply`,
         payload,
@@ -111,29 +118,27 @@ const ManageDiskusiProduk = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      
-      // Update the local state with the updated discussion
+
       setDiscussions(
         discussions.map((disc) =>
-          disc.ID_DISKUSI === currentDiscussionId 
-            ? { 
-                ...disc, 
+          disc.ID_DISKUSI === currentDiscussionId
+            ? {
+                ...disc,
                 BALASAN: replyText,
                 TANGGAL_BALASAN: payload.TANGGAL_BALASAN,
                 STATUS_BALASAN: "Sudah Dibalas",
-                NAMA_CS: user.name
-              } 
+                NAMA_CS: user.nama || "CS",
+              }
             : disc
         )
       );
-      
+
       setIsModalOpen(false);
       setReplyText("");
       setError("");
     } catch (err) {
       setError(
-        err.response?.data?.message ||
-          "Failed to submit reply. Please try again."
+        err.response?.data?.error || "Failed to submit reply. Please try again."
       );
     }
   };
@@ -141,10 +146,10 @@ const ManageDiskusiProduk = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
+    return date.toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   };
 
@@ -156,7 +161,6 @@ const ManageDiskusiProduk = () => {
         <div className="bg-red-50 text-red-600 p-3 rounded mb-4">{error}</div>
       )}
 
-      {/* Filters and Search */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <input
@@ -201,9 +205,10 @@ const ManageDiskusiProduk = () => {
         </div>
       </div>
 
-      {/* Table */}
       {loading ? (
-        <p>Loading...</p>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olive-700"></div>
+        </div>
       ) : (
         <div className="overflow-x-auto bg-white rounded-lg shadow mt-10">
           <table className="min-w-full divide-y divide-gray-200">
@@ -217,7 +222,7 @@ const ManageDiskusiProduk = () => {
                   "Tanggal Diskusi",
                   "Status",
                   "Balasan",
-                  "Tanggal Balasan", 
+                  "Tanggal Balasan",
                   "CS",
                   "Aksi",
                 ].map((header) => (
@@ -238,14 +243,14 @@ const ManageDiskusiProduk = () => {
                       {disc.ID_DISKUSI}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {disc.NAMA_PRODUK}
+                      {disc.NAMA_PRODUK || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {disc.NAMA_PELANGGAN}
+                      {disc.NAMA_PELANGGAN || "Customer #" + disc.ID_PEMBELI}
                     </td>
                     <td className="px-6 py-4">
                       <div className="max-w-xs overflow-hidden text-ellipsis">
-                        {disc.PESAN_DISKUSI}
+                        {disc.PESAN_DISKUSI || "-"}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -259,7 +264,7 @@ const ManageDiskusiProduk = () => {
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {disc.STATUS_BALASAN}
+                        {disc.STATUS_BALASAN || "-"}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -278,14 +283,19 @@ const ManageDiskusiProduk = () => {
                         className="bg-olive-500 text-white px-3 py-1 rounded-md hover:bg-olive-900"
                         onClick={() => handleOpenReplyModal(disc)}
                       >
-                        {disc.STATUS_BALASAN === "Sudah Dibalas" ? "Edit Balasan" : "Balas"}
+                        {disc.STATUS_BALASAN === "Sudah Dibalas"
+                          ? "Edit Balasan"
+                          : "Balas"}
                       </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="10" className="px-6 py-4 text-center text-gray-500">
+                  <td
+                    colSpan="10"
+                    className="px-6 py-4 text-center text-gray-500"
+                  >
                     Tidak ada diskusi yang ditemukan
                   </td>
                 </tr>
@@ -295,13 +305,10 @@ const ManageDiskusiProduk = () => {
         </div>
       )}
 
-      {/* Reply Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-900/50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-2/3">
-            <h2 className="text-xl font-bold mb-4">
-              Balas Diskusi Produk
-            </h2>
+            <h2 className="text-xl font-bold mb-4">Balas Diskusi Produk</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -313,10 +320,10 @@ const ManageDiskusiProduk = () => {
                   Diskusi Pelanggan
                 </label>
                 <div className="p-3 bg-gray-100 rounded-md">
-                  {discussions.find(d => d.ID_DISKUSI === currentDiscussionId)?.PESAN_DISKUSI}
+                  {discussions.find((d) => d.ID_DISKUSI === currentDiscussionId)
+                    ?.PESAN_DISKUSI || "-"}
                 </div>
               </div>
-              
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Balasan Anda
@@ -326,11 +333,9 @@ const ManageDiskusiProduk = () => {
                   onChange={handleReplyChange}
                   rows="5"
                   className="w-full p-2 border border-gray-300 rounded-md"
-                  required
                   placeholder="Ketik balasan untuk diskusi pelanggan ini..."
                 />
               </div>
-              
               <div className="flex justify-end mt-6">
                 <button
                   type="button"
@@ -342,6 +347,7 @@ const ManageDiskusiProduk = () => {
                 <button
                   type="submit"
                   className="bg-olive-500 text-white px-4 py-2 rounded-md hover:bg-olive-900"
+                  disabled={!replyText.trim()}
                 >
                   Kirim Balasan
                 </button>

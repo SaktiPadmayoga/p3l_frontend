@@ -7,15 +7,6 @@ import AuthService from "../../../services/authService";
 
 const API_URL = "http://localhost:8000/api";
 
-// Dummy images from catalogue
-const dummyImages = [
-  "/src/assets/hero-bg.jpg",
-  "/src/assets/tenda.webp",
-  "/src/assets/tenda1.webp",
-  "/src/assets/tenda2.webp",
-  "/src/assets/tenda3.webp",
-];
-
 export default function RecommendedProducts() {
   const sliderRef = useRef(null);
   const [products, setProducts] = useState([]);
@@ -29,13 +20,7 @@ export default function RecommendedProducts() {
       try {
         setLoading(true);
         const productsResponse = await axios.get(`${API_URL}/products`);
-        const productsWithImages = productsResponse.data.data.map(
-          (product, index) => ({
-            ...product,
-            image: dummyImages[index % dummyImages.length], // Cycle through dummy images
-          })
-        );
-        setProducts(productsWithImages);
+        setProducts(productsResponse.data.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -79,6 +64,12 @@ export default function RecommendedProducts() {
     const showAddToCart = userType !== "penitip"; // Hide for penitip
     const isPembeli = userType === "pembeli";
 
+    // Select main image (IS_UTAMA = true)
+    const mainImage =
+      product.photos?.find((photo) => photo.is_utama)?.url ||
+      product.image ||
+      "/api/placeholder/60/60";
+
     return (
       <div
         className="bg-white rounded-xl hover:shadow-xl overflow-hidden cursor-pointer hover:-translate-y-1 p-4 transition duration-300"
@@ -86,9 +77,10 @@ export default function RecommendedProducts() {
       >
         <div className="flex justify-center">
           <img
-            src={product.image}
+            src={mainImage}
             alt={product.name || "Product"}
-            className=" object-cover w-72 h-52 rounded-lg"
+            className="object-cover w-72 h-52 rounded-lg"
+            onError={(e) => (e.target.src = "/api/placeholder/60/60")}
           />
         </div>
         <div className="pt-4">
@@ -100,7 +92,7 @@ export default function RecommendedProducts() {
           </p>
           <div className="flex justify-between items-center mt-2">
             <span className="font-bold text-2xl text-stone-800">
-              ${product.price ? product.price.toFixed(2) : "N/A"}
+              Rp {product.price ? product.price.toLocaleString("id-ID") : "N/A"}
             </span>
             {showAddToCart && (
               <div className="flex space-x-2">

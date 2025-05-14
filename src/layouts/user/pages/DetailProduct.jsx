@@ -8,27 +8,19 @@ import AuthService from "../../../services/authService";
 
 const API_URL = "http://localhost:8000/api";
 
-// Dummy images
-const dummyImages = [
-  "/src/assets/tenda.webp",
-  "/src/assets/tenda1.webp",
-  "/src/assets/tenda2.webp",
-  
-];
-
 const DetailProduct = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentImage, setCurrentImage] = useState(dummyImages[0]);
+  const [currentImage, setCurrentImage] = useState(null);
   const [comment, setComment] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userType, setUserType] = useState(null);
   const [commentError, setCommentError] = useState(null);
   const [submittingComment, setSubmittingComment] = useState(false);
-  const images = dummyImages;
+  const [images, setImages] = useState([]);
   const productDetailRef = useRef(null);
   const recommendedSectionRef = useRef(null);
 
@@ -51,7 +43,17 @@ const DetailProduct = () => {
 
         // Fetch product details
         const productResponse = await axios.get(`${API_URL}/products/${id}`);
-        setProduct(productResponse.data.data);
+        const productData = productResponse.data.data;
+        setProduct(productData);
+
+        // Set images from product photos
+        const productImages = productData.photos || [];
+        setImages(productImages.map((photo) => photo.url));
+
+        // Set main image (IS_UTAMA = true)
+        const mainImage =
+          productImages.find((photo) => photo.is_utama) || productImages[0];
+        setCurrentImage(mainImage ? mainImage.url : "/api/placeholder/60/60");
 
         // Fetch discussions for the product
         const discussionsResponse = await axios.get(`${API_URL}/diskusi`, {
@@ -59,7 +61,6 @@ const DetailProduct = () => {
         });
         setDiscussions(discussionsResponse.data);
 
-        setCurrentImage(dummyImages[0]);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -108,7 +109,10 @@ const DetailProduct = () => {
   };
 
   const handleSubmit = async () => {
-    if (!comment.trim()) return;
+    if (!comment.trim()) {
+      setCommentError("Comment cannot be empty");
+      return;
+    }
 
     try {
       setSubmittingComment(true);
@@ -117,41 +121,50 @@ const DetailProduct = () => {
       const token = localStorage.getItem("token");
       const user = AuthService.getCurrentUser();
 
-      if (!user || !token) {
-        setCommentError("You need to be logged in to comment");
+      if (!user || !token || !user.id) {
+        setCommentError("You need to be logged in as a buyer to comment");
         return;
       }
 
-      const response = await axios.post(
-        `${API_URL}/pembeli/diskusi`, // Changed from /diskusi to /pembeli/diskusi
-        {
-          ID_BALASANDISKUSI: null,
-          ID_PEGAWAI: null,
-          ID_PEMBELI: user.id,
-          KODE_PRODUK: id,
-          PESAN: comment,
-          TANGGAL_DIBUAT: new Date().toISOString(),
+      if (userType !== "pembeli") {
+        setCommentError("Only buyers can post discussions");
+        return;
+      }
+
+      // Format TANGGAL_DIBUAT to MySQL-compatible format (YYYY-MM-DD HH:MM:SS)
+      const now = new Date();
+      const formattedDateTime = now
+        .toISOString()
+        .slice(0, 19)
+        .replace("T", " "); // e.g., "2025-05-13 14:33:07"
+
+      const payload = {
+        ID_BALASANDISKUSI: null,
+        ID_PEGAWAI: null,
+        ID_PEMBELI: user.id,
+        KODE_PRODUK: id,
+        PESAN: comment,
+        TANGGAL_DIBUAT: formattedDateTime,
+      };
+
+      console.log("Submitting discussion payload:", payload); // Debug log
+
+      const response = await axios.post(`${API_URL}/pembeli/diskusi`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      });
 
       // Add the new discussion to the list
       const newDiscussion = response.data;
 
-      // Make sure we have the required properties for display
+      // Ensure required properties for display
       newDiscussion.pembeli = {
         NAMA: user.nama || "User",
       };
 
       setDiscussions([...discussions, newDiscussion]);
       setComment("");
-
-      // Scroll to the new comment
-      
     } catch (err) {
       console.error("Error posting discussion:", err);
       if (err.response?.data?.error) {
@@ -233,6 +246,7 @@ const DetailProduct = () => {
                     src={image}
                     className="h-full object-fill"
                     alt={`Thumbnail ${index + 1}`}
+                    onError={(e) => (e.target.src = "/api/placeholder/60/60")}
                   />
                 </div>
               ))}
@@ -242,6 +256,7 @@ const DetailProduct = () => {
                 src={currentImage}
                 alt={product.name || "Product Image"}
                 className="w-auto h-full object-fill rounded-md"
+                onError={(e) => (e.target.src = "/api/placeholder/60/60")}
               />
             </div>
           </div>
@@ -346,7 +361,7 @@ const DetailProduct = () => {
                         <span className="font-semibold text-gray-900 text-sm">
                           {discussion.pegawai?.NAMA ||
                             discussion.pembeli?.NAMA ||
-                            "Anonymous"}
+                            "User"}
                         </span>
                         <span className="text-sm text-gray-500">
                           {new Date(discussion.TANGGAL_DIBUAT).toLocaleString(
@@ -371,7 +386,7 @@ const DetailProduct = () => {
                       {discussion.balasan &&
                         discussion.balasan.length > 0 &&
                         discussion.balasan
-                          .filter((reply) => reply.pegawai) // Only show replies from pegawai
+                          .filter((reply) => reply.pegawai)
                           .map((reply) => (
                             <div
                               key={reply.ID_DISKUSI}
@@ -386,7 +401,7 @@ const DetailProduct = () => {
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">
                                     <span className="font-semibold text-gray-900 text-lg">
-                                      {reply.pegawai?.NAMA || "Anonymous"}
+                                      {reply.pegawai?.NAMA || "User"}
                                     </span>
                                     <span className="bg-stone-100 text-stone-800 text-xs px-2 py-0.5 rounded-full">
                                       Official
